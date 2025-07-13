@@ -74,7 +74,7 @@ fn fix_operation_responses(responses: &mut openapiv3::Responses) {
 use std::collections::HashMap;
 
 fn generate_controllers(spec: &openapiv3::OpenAPI) -> (String, String) {
-    let mut controllers: HashMap<String, Vec<(String, String, String, String, Vec<(String, String)>, Option<Vec<(String, String)>>)>> = HashMap::new();
+    let mut controllers: HashMap<String, Vec<(String, String, String, String)>> = HashMap::new();
     
     // Анализируем все пути и группируем по контроллерам на основе operation_id
     for (_path, path_item) in &spec.paths.paths {
@@ -97,13 +97,10 @@ fn generate_controllers(spec: &openapiv3::OpenAPI) -> (String, String) {
                         if let Some((controller_name, method_name)) = extract_controller_from_operation_id(operation_id) {
                             let summary = operation.summary.clone().unwrap_or_default();
                             
-                            // Анализируем параметры операции
-                            let (path_params, body_params) = analyze_operation_parameters(spec, operation);
-                            
                             controllers
                                 .entry(controller_name)
                                 .or_insert_with(Vec::new)
-                                .push((method_name, operation_id.clone(), summary, method.to_string(), path_params, body_params));
+                                .push((method_name, operation_id.clone(), summary, method.to_string()));
                         }
                     }
                 }
@@ -118,8 +115,8 @@ fn generate_controllers(spec: &openapiv3::OpenAPI) -> (String, String) {
     }
 
     // Генерируем код контроллеров
-    let controller_structs = generate_controller_code_with_params(&controllers);
-    let client_methods = generate_client_methods_simple(&controllers);
+    let controller_structs = generate_controller_code(&controllers);
+    let client_methods = generate_client_methods(&controllers);
     
     (controller_structs, client_methods)
 }
