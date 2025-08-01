@@ -1,5 +1,5 @@
 use dotenv::dotenv;
-use remnawave_api::{RemnawaveApiClient, types::SubscriptionTemplateType};
+use remnawave::{types::SubscriptionTemplateType, RemnawaveApiClient};
 use std::env;
 
 fn setup_client() -> RemnawaveApiClient {

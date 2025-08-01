@@ -1,5 +1,5 @@
 use mockito::Server;
-use remnawave_api::{ApiError, RemnawaveApiClient};
+use remnawave::{ApiError, RemnawaveApiClient};
 use serde_json::json;
 
 #[tokio::test]

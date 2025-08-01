@@ -14,7 +14,7 @@ edition = "2021"
 exclude = ["tests/*"]
 
 [lib]
-name = "remnawave_api"
+name = "remnawave"
 path = "src/lib.rs"
 
 [dependencies]

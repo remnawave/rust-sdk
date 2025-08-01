@@ -7,6 +7,11 @@ macro_rules! api_request_common {
             request = request.header("Authorization", format!("Bearer {}", token));
         }
 
+        // X-Api-Key for Caddy (https://remna.st/security/caddy-with-custom-path#issuing-api-keys)
+        if let Some(caddy_token) = &$self.client.caddy_token {
+            request = request.header("X-Api-Key", caddy_token);
+        }
+
         let request = if let Some(body) = $body {
             request.json(&body)
         } else {
