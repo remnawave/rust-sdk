@@ -54,11 +54,7 @@ impl RemnawaveApiClient {
     }
 
     pub fn set_token(&mut self, token: Option<String>) {
-        let new_client = Arc::new(ApiClient::with_caddy_token(
-            self.client.base_url().to_string(), 
-            token, 
-            self.client.caddy_token.clone()
-        ));
+        let new_client = Arc::new(ApiClient::with_caddy_token(self.client.base_url().to_string(), token, self.client.caddy_token.clone()));
 
         self.client = new_client.clone();
         self.auth = AuthController::new(new_client.clone());
@@ -79,11 +75,7 @@ impl RemnawaveApiClient {
     }
 
     pub fn set_caddy_token(&mut self, caddy_token: Option<String>) {
-        let new_client = Arc::new(ApiClient::with_caddy_token(
-            self.client.base_url().to_string(), 
-            self.client.token.clone(), 
-            caddy_token
-        ));
+        let new_client = Arc::new(ApiClient::with_caddy_token(self.client.base_url().to_string(), self.client.token.clone(), caddy_token));
 
         self.client = new_client.clone();
         self.auth = AuthController::new(new_client.clone());
