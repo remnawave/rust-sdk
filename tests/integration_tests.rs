@@ -9,7 +9,7 @@ async fn setup_client() -> (mockito::ServerGuard, RemnawaveApiClient) {
     let server = mockito::Server::new_async().await;
     let client = RemnawaveApiClient::new(server.url(), Some("test_token".to_string())).expect("Failed to create API client");
 
-    return (server, client);
+    (server, client)
 }
 
 fn create_subscription_mock(server: &mut mockito::Server) -> Mock {
@@ -145,7 +145,7 @@ fn create_raw_subscription_not_found_mock(server: &mut mockito::Server) -> Mock 
 
 fn create_template_mock(server: &mut mockito::Server, template_type: &str) -> Mock {
     server
-        .mock("GET", format!("/api/subscription-templates/{}", template_type).as_str())
+        .mock("GET", format!("/api/subscription-templates/{template_type}").as_str())
         .with_status(200)
         .with_header("content-type", "application/json")
         .with_body(
@@ -255,7 +255,6 @@ async fn test_multiple_template_requests() {
     assert!(xray_result.is_ok());
     assert!(singbox_result.is_ok());
 
-    // Verify response content
     let clash_response = clash_result.unwrap();
     assert_eq!(clash_response.response.template_type, SubscriptionTemplateType::Clash);
     assert_eq!(clash_response.response.uuid, Uuid::from_str("550e8400-e29b-41d4-a716-446655440000").unwrap());
@@ -274,11 +273,10 @@ async fn test_concurrent_requests() {
         client.subscription_templates.get_template(SubscriptionTemplateType::SingBox)
     );
 
-    assert!(clash_result.is_ok(), "Expected Ok result for Clash template: {:?}", clash_result);
-    assert!(xray_result.is_ok(), "Expected Ok result for Xray template: {:?}", xray_result);
-    assert!(singbox_result.is_ok(), "Expected Ok result for SingBox template: {:?}", singbox_result);
+    assert!(clash_result.is_ok(), "Expected Ok result for Clash template: {clash_result:?}");
+    assert!(xray_result.is_ok(), "Expected Ok result for Xray template: {xray_result:?}");
+    assert!(singbox_result.is_ok(), "Expected Ok result for SingBox template: {singbox_result:?}");
 
-    // Verify all responses have correct template types
     assert_eq!(clash_result.unwrap().response.template_type, SubscriptionTemplateType::Clash);
     assert_eq!(xray_result.unwrap().response.template_type, SubscriptionTemplateType::XrayJson);
     assert_eq!(singbox_result.unwrap().response.template_type, SubscriptionTemplateType::SingBox);
@@ -289,7 +287,6 @@ async fn test_client_token_update() {
     let (_, mut client) = setup_client().await;
     let original_token = "test_token".to_string();
 
-    // Test updating token
     client.set_token(Some("new_test_token".to_string()));
     client.set_token(Some(original_token));
 

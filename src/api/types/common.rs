@@ -26,46 +26,36 @@ pub struct InboundDto {
     pub raw_inbound: Option<serde_json::Value>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum TrafficLimitStrategy {
+    #[default]
     NoReset,
     Day,
     Week,
     Month,
 }
 
-impl Default for TrafficLimitStrategy {
-    fn default() -> Self {
-        TrafficLimitStrategy::NoReset
-    }
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum UserStatus {
+    #[default]
     Active,
     Disabled,
     Limited,
     Expired,
 }
 
-impl Default for UserStatus {
-    fn default() -> Self {
-        UserStatus::Active
-    }
-}
-
 impl fmt::Display for TrafficLimitStrategy {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = serde_plain::to_string(self).unwrap();
-        write!(f, "{}", s)
+        write!(f, "{s}")
     }
 }
 
 impl fmt::Display for UserStatus {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = serde_plain::to_string(self).unwrap();
-        write!(f, "{}", s)
+        write!(f, "{s}")
     }
 }

@@ -13,7 +13,7 @@ impl SubscriptionsController {
     #[doc = "GET /api/sub/outline/{}/{}/{} - SubscriptionsController"]
     pub async fn get_subscription_with_type(&self, short_uuid: String, encoded_tag: String, subscription_type: Option<String>) -> Result<String, crate::ApiError> {
         let subscription_type = subscription_type.unwrap_or_else(|| "ss".to_string());
-        let url = format!("{}{}", self.client.base_url(), format!("/api/sub/outline/{}/{}/{}", short_uuid, subscription_type, encoded_tag));
+        let url = format!("{}/api/sub/outline/{}/{}/{}", self.client.base_url(), short_uuid, subscription_type, encoded_tag);
         let response = api_request_common!(self, get, url, None::<()>)?;
         self.handle_response(response, url).await
     }

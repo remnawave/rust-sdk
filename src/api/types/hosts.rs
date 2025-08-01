@@ -21,7 +21,7 @@ pub enum AlpnType {
 impl fmt::Display for AlpnType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = serde_plain::to_string(self).unwrap();
-        write!(f, "{}", s)
+        write!(f, "{s}")
     }
 }
 
@@ -42,28 +42,23 @@ pub enum FingerprintType {
 impl fmt::Display for FingerprintType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = serde_plain::to_string(self).unwrap();
-        write!(f, "{}", s)
+        write!(f, "{s}")
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Default)]
 #[serde(rename_all = "UPPERCASE")]
 pub enum SecurityLayerType {
+    #[default]
     DEFAULT,
     TLS,
     NONE,
 }
 
-impl Default for SecurityLayerType {
-    fn default() -> Self {
-        SecurityLayerType::DEFAULT
-    }
-}
-
 impl fmt::Display for SecurityLayerType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = serde_plain::to_string(self).unwrap();
-        write!(f, "{}", s)
+        write!(f, "{s}")
     }
 }
 

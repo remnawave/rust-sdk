@@ -18,7 +18,7 @@ macro_rules! api_request_common {
             request
         };
 
-        request.send().await.map_err(|e| crate::ApiError {
+        request.send().await.map_err(|e| $crate::ApiError {
             status_code: 0,
             url: $url.clone(),
             request_body: None,
@@ -38,7 +38,7 @@ macro_rules! api_get {
     ($controller:ident, $method_name:ident, $path:expr, $response_type:ty) => {
         impl $controller {
             #[doc = concat!("GET ", $path, " - ", stringify!($controller))]
-            pub async fn $method_name(&self) -> Result<$response_type, crate::ApiError> {
+            pub async fn $method_name(&self) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), $path);
                 let response = api_request_common!(self, get, url, None::<()>)?;
                 self.handle_response(response, url).await
@@ -53,7 +53,7 @@ macro_rules! api_post {
     ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty) => {
         impl $controller {
             #[doc = concat!("POST ", $path, " - ", stringify!($controller))]
-            pub async fn $method_name(&self, request: $request_type) -> Result<$response_type, crate::ApiError> {
+            pub async fn $method_name(&self, request: $request_type) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), $path);
                 let response = api_request_common!(self, post, url, Some(request))?;
                 self.handle_response(response, url).await
@@ -68,7 +68,7 @@ macro_rules! api_post_no_body {
     ($controller:ident, $method_name:ident, $path:expr, $response_type:ty) => {
         impl $controller {
             #[doc = concat!("POST ", $path, " - ", stringify!($controller))]
-            pub async fn $method_name(&self) -> Result<$response_type, crate::ApiError> {
+            pub async fn $method_name(&self) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), $path);
                 let response = api_request_common!(self, post, url, None::<()>)?;
                 self.handle_response(response, url).await
@@ -83,7 +83,7 @@ macro_rules! api_get_with_path {
     ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, $($param:ident: $param_type:ty),*) => {
         impl $controller {
             #[doc = concat!("GET ", $path, " - ", stringify!($controller))]
-            pub async fn $method_name(&self, $($param: $param_type),*) -> Result<$response_type, crate::ApiError> {
+            pub async fn $method_name(&self, $($param: $param_type),*) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), format!($path, $($param),*));
                 let response = api_request_common!(self, get, url, None::<()>)?;
                 self.handle_response(response, url).await
@@ -98,7 +98,7 @@ macro_rules! api_get_with_query {
     ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, $($param:ident: $param_type:ty),*) => {
         impl $controller {
             #[doc = concat!("GET ", $path, " - ", stringify!($controller))]
-            pub async fn $method_name(&self, $($param: $param_type),*) -> Result<$response_type, crate::ApiError> {
+            pub async fn $method_name(&self, $($param: $param_type),*) -> Result<$response_type, $crate::ApiError> {
                 let mut url = format!("{}{}", self.client.base_url(), $path);
 
                 let mut query_params = Vec::new();
@@ -125,7 +125,7 @@ macro_rules! api_get_with_path_and_query {
     ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, path_params: [$($path_param:ident: $path_param_type:ty),*], query_params: [$($query_param:ident: $query_param_type:ty),*]) => {
         impl $controller {
             #[doc = concat!("GET ", $path, " - ", stringify!($controller))]
-            pub async fn $method_name(&self, $($path_param: $path_param_type,)* $($query_param: $query_param_type),*) -> Result<$response_type, crate::ApiError> {
+            pub async fn $method_name(&self, $($path_param: $path_param_type,)* $($query_param: $query_param_type),*) -> Result<$response_type, $crate::ApiError> {
                 let mut url = format!("{}{}", self.client.base_url(), format!($path, $($path_param),*));
 
                 let mut query_params = Vec::new();
@@ -152,7 +152,7 @@ macro_rules! api_patch {
     ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty) => {
         impl $controller {
             #[doc = concat!("PATCH ", $path, " - ", stringify!($controller))]
-            pub async fn $method_name(&self, request: $request_type) -> Result<$response_type, crate::ApiError> {
+            pub async fn $method_name(&self, request: $request_type) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), $path);
                 let response = api_request_common!(self, patch, url, Some(request))?;
                 self.handle_response(response, url).await
@@ -167,7 +167,7 @@ macro_rules! api_delete {
     ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, $param:ident: $param_type:ty) => {
         impl $controller {
             #[doc = concat!("DELETE ", $path, " - ", stringify!($controller))]
-            pub async fn $method_name(&self, $param: $param_type) -> Result<$response_type, crate::ApiError> {
+            pub async fn $method_name(&self, $param: $param_type) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), $path.replace(&format!("{{{}}}", stringify!($param)), &$param.to_string()));
                 let response = api_request_common!(self, delete, url, None::<()>)?;
                 self.handle_response(response, url).await
@@ -181,7 +181,7 @@ macro_rules! api_post_with_path {
     ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, $($param:ident: $param_type:ty),*) => {
         impl $controller {
             #[doc = concat!("POST ", $path, " - ", stringify!($controller))]
-            pub async fn $method_name(&self, $($param: $param_type,)* request: $request_type) -> Result<$response_type, crate::ApiError> {
+            pub async fn $method_name(&self, $($param: $param_type,)* request: $request_type) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), format!($path, $($param),*));
                 let response = api_request_common!(self, post, url, Some(request))?;
                 self.handle_response(response, url).await
@@ -196,7 +196,7 @@ macro_rules! api_post_with_path_no_body {
     ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, $($param:ident: $param_type:ty),*) => {
         impl $controller {
             #[doc = concat!("POST ", $path, " - ", stringify!($controller))]
-            pub async fn $method_name(&self, $($param: $param_type),*) -> Result<$response_type, crate::ApiError> {
+            pub async fn $method_name(&self, $($param: $param_type),*) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), format!($path, $($param),*));
                 let response = api_request_common!(self, post, url, None::<()>)?;
                 self.handle_response(response, url).await
@@ -211,7 +211,7 @@ macro_rules! api_patch_with_path {
     ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, $($param:ident: $param_type:ty),*) => {
         impl $controller {
             #[doc = concat!("PATCH ", $path, " - ", stringify!($controller))]
-            pub async fn $method_name(&self, $($param: $param_type,)* request: $request_type) -> Result<$response_type, crate::ApiError> {
+            pub async fn $method_name(&self, $($param: $param_type,)* request: $request_type) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), format!($path, $($param),*));
                 let response = api_request_common!(self, patch, url, Some(request))?;
                 self.handle_response(response, url).await
@@ -225,17 +225,17 @@ macro_rules! api_patch_with_path {
 macro_rules! api_controller {
     ($controller:ident) => {
         pub struct $controller {
-            client: std::sync::Arc<crate::api::client::ApiClient>,
+            client: std::sync::Arc<$crate::api::client::ApiClient>,
         }
 
         impl $controller {
-            pub fn new(client: std::sync::Arc<crate::api::client::ApiClient>) -> Self {
+            pub fn new(client: std::sync::Arc<$crate::api::client::ApiClient>) -> Self {
                 Self {
                     client,
                 }
             }
 
-            async fn handle_response<T>(&self, response: reqwest::Response, url: String) -> Result<T, crate::ApiError>
+            async fn handle_response<T>(&self, response: reqwest::Response, url: String) -> Result<T, $crate::ApiError>
             where
                 T: serde::de::DeserializeOwned,
             {
@@ -244,7 +244,7 @@ macro_rules! api_controller {
                     response.headers().iter().filter_map(|(name, value)| value.to_str().ok().map(|v| (name.to_string(), v.to_string()))).collect();
 
                 if status.is_success() {
-                    let response_text = response.text().await.map_err(|e| crate::ApiError {
+                    let response_text = response.text().await.map_err(|e| $crate::ApiError {
                         status_code: status.as_u16(),
                         url: url.clone(),
                         request_body: None,
@@ -257,7 +257,7 @@ macro_rules! api_controller {
                         error: None,
                     })?;
 
-                    serde_json::from_str(&response_text).map_err(|e| crate::ApiError {
+                    serde_json::from_str(&response_text).map_err(|e| $crate::ApiError {
                         status_code: status.as_u16(),
                         url: url.clone(),
                         request_body: None,
@@ -288,7 +288,7 @@ macro_rules! api_controller {
                         (None, None, None, None, None)
                     };
 
-                    Err(crate::ApiError {
+                    Err($crate::ApiError {
                         status_code: status.as_u16(),
                         url,
                         request_body: None,

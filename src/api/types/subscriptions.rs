@@ -21,7 +21,7 @@ pub enum SubscriptionClientType {
 impl fmt::Display for SubscriptionClientType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = serde_plain::to_string(self).unwrap();
-        write!(f, "{}", s)
+        write!(f, "{s}")
     }
 }
 
@@ -41,7 +41,7 @@ pub enum SubscriptionTemplateType {
 impl fmt::Display for SubscriptionTemplateType {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let s = serde_plain::to_string(self).unwrap();
-        write!(f, "{}", s)
+        write!(f, "{s}")
     }
 }
 
