@@ -1,0 +1,66 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  remnwave_api:
+    name: Build & Audit (Rust matrix)
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain:
+          - nightly
+          - 1.82.0
+          - 1.87.0
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y cmake libclang-dev wget gnupg ca-certificates lsb-release --no-install-recommends
+          wget -O - https://openresty.org/package/pubkey.gpg | sudo gpg --dearmor -o /usr/share/keyrings/openresty.gpg
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/openresty.gpg] http://openresty.org/package/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/openresty.list
+          sudo apt update
+          sudo apt install -y openresty --no-install-recommends
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          components: rustfmt,clippy
+
+      - name: Cache cargo registry and build artifacts
+        uses: Swatinem/rust-cache@v2
+
+      - name: Run cargo fmt
+        run: cargo fmt --all -- --check
+
+      - name: Run cargo test (lib, bins, tests)
+        run: cargo test --verbose --lib --bins --tests --no-fail-fast
+
+      - name: Run doc tests
+        run: cargo test --verbose --doc
+
+      - name: Run clippy (on stable 1.87.0)
+        if: matrix.toolchain == '1.87.0'
+        run: cargo clippy --all-targets --all -- -D warnings
+
+      - name: Run cargo audit (on stable 1.87.0)
+        if: matrix.toolchain == '1.87.0'
+        run: |
+          cargo install cargo-audit
+          cargo audit
+
+      - name: Run cargo machete (on stable 1.87.0)
+        if: matrix.toolchain == '1.87.0'
+        run: |
+          cargo install cargo-machete --version 0.8.0
+          cargo machete
