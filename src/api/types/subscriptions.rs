@@ -52,11 +52,16 @@ pub struct SubscriptionUser {
     pub days_left: usize,
     pub traffic_used: String,
     pub traffic_limit: String,
+    pub lifetime_traffic_used: String,
+    pub lifetime_traffic_used_bytes: String,
+    pub traffic_limit_bytes: String,
+    pub traffic_used_bytes: String,
     pub username: String,
     pub expires_at: DateTime<Utc>,
     pub is_active: bool,
     pub user_status: UserStatus,
     pub traffic_limit_strategy: TrafficLimitStrategy,
+    pub tag: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -73,7 +78,7 @@ pub struct RawHost {
     pub fingerprint: Option<String>,
     pub host: Option<String>,
     pub network: Option<String>,
-    pub password: Option<String>,
+    pub password: Option<HostPasswords>,
     pub path: Option<String>,
     pub public_key: Option<String>,
     pub port: Option<u16>,
@@ -89,6 +94,12 @@ pub struct RawHost {
     pub server_description: Option<String>,
     pub flow: Option<String>,
     pub protocol_options: Option<ProtocolOptions>,
+    #[serde(rename = "muxParams")]
+    pub mux_params: Option<serde_json::Value>,
+    #[serde(rename = "sockoptParams")]
+    pub sockopt_params: Option<serde_json::Value>,
+    #[serde(rename = "dbData")]
+    pub db_data: Option<serde_json::Value>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -106,6 +117,17 @@ pub struct ProtocolOptions {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SsOptions {
     pub method: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct HostPasswords {
+    #[serde(rename = "trojanPassword")]
+    pub trojan_password: Option<String>,
+    #[serde(rename = "vlessPassword")]
+    pub vless_password: Option<String>,
+    #[serde(rename = "ssPassword")]
+    pub ss_password: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
