@@ -1,3 +1,4 @@
+#![recursion_limit = "256"]
 use std::str::FromStr;
 
 use mockito::{Matcher, Mock};
@@ -25,27 +26,86 @@ fn create_subscription_mock(server: &mut mockito::Server) -> Mock {
                         {
                             "isFound": true,
                             "user": {
-                                "shortUuid": "abc123",
-                                "daysLeft": 30,
-                                "trafficUsed": "1024000",
-                                "trafficLimit": "10737418240",
-                                "username": "test_user",
-                                "expiresAt": "2024-12-31T23:59:59.000Z",
+                                "shortUuid": "user_short_uuid_1",
+                                "daysLeft": 27027,
+                                "trafficUsed": "31.48 MiB",
+                                "trafficLimit": "0",
+                                "lifetimeTrafficUsed": "31.48 MiB",
+                                "lifetimeTrafficUsedBytes": "33013814",
+                                "trafficLimitBytes": "0",
+                                "trafficUsedBytes": "33013814",
+                                "username": "user1",
+                                "expiresAt": "2099-08-26T23:10:43.000Z",
                                 "isActive": true,
                                 "userStatus": "ACTIVE",
-                                "trafficLimitStrategy": "MONTH"
+                                "trafficLimitStrategy": "NO_RESET"
                             },
                             "links": [
-                                "vless://test-link-1",
-                                "vmess://test-link-2"
+                                "vless://uuid1@endpoint1:8443?...#Country1 endpoint1",
+                                "vless://uuid1@endpoint2:8443?...#Country1 endpoint2"
                             ],
-                            "ssConfLinks": {
-                                "ss1": "ss://test-ss-link"
+                            "ssConfLinks": {},
+                            "subscriptionUrl": "https://example.com/api/sub/user_short_uuid_1",
+                            "happ": {
+                                "cryptoLink": "happ://crypt/example_crypto_link1"
+                            }
+                        },
+                        {
+                            "isFound": true,
+                            "user": {
+                                "shortUuid": "user_short_uuid_2",
+                                "daysLeft": 27018,
+                                "trafficUsed": "43.93 GiB",
+                                "trafficLimit": "0",
+                                "lifetimeTrafficUsed": "43.93 GiB",
+                                "lifetimeTrafficUsedBytes": "47174214929",
+                                "trafficLimitBytes": "0",
+                                "trafficUsedBytes": "47174214929",
+                                "username": "user2",
+                                "expiresAt": "2099-08-17T09:26:23.000Z",
+                                "isActive": true,
+                                "userStatus": "ACTIVE",
+                                "trafficLimitStrategy": "NO_RESET"
                             },
-                            "subscriptionUrl": "https://example.com/sub/abc123"
+                            "links": [
+                                "vless://uuid2@endpoint1:8443?...#Country1 endpoint1",
+                                "vless://uuid2@endpoint2:8443?...#Country1 endpoint2"
+                            ],
+                            "ssConfLinks": {},
+                            "subscriptionUrl": "https://example.com/api/sub/user_short_uuid_2",
+                            "happ": {
+                                "cryptoLink": "happ://crypt/example_crypto_link2"
+                            }
+                        },
+                        {
+                            "isFound": true,
+                            "user": {
+                                "shortUuid": "user_short_uuid_3",
+                                "daysLeft": 26999,
+                                "trafficUsed": "57.46 GiB",
+                                "trafficLimit": "0",
+                                "lifetimeTrafficUsed": "57.46 GiB",
+                                "lifetimeTrafficUsedBytes": "61694628011",
+                                "trafficLimitBytes": "0",
+                                "trafficUsedBytes": "61694628011",
+                                "username": "user3",
+                                "expiresAt": "2099-07-29T15:43:09.000Z",
+                                "isActive": true,
+                                "userStatus": "ACTIVE",
+                                "trafficLimitStrategy": "NO_RESET"
+                            },
+                            "links": [
+                                "vless://uuid3@endpoint1:8443?...#Country1 endpoint1",
+                                "vless://uuid3@endpoint2:8443?...#Country1 endpoint2"
+                            ],
+                            "ssConfLinks": {},
+                            "subscriptionUrl": "https://example.com/api/sub/user_short_uuid_3",
+                            "happ": {
+                                "cryptoLink": "happ://crypt/example_crypto_link3"
+                            }
                         }
                     ],
-                    "total": 1
+                    "total": 19
                 }
             })
             .to_string(),
@@ -143,6 +203,167 @@ fn create_raw_subscription_not_found_mock(server: &mut mockito::Server) -> Mock 
         .create()
 }
 
+fn create_raw_subscription_found_mock(server: &mut mockito::Server) -> Mock {
+    server
+        .mock("GET", "/api/sub/test-uuid/raw")
+        .with_status(200)
+        .with_header("content-type", "application/json")
+        .with_body(
+            json!({
+                "user": {
+                    "shortUuid": "test-short-uuid",
+                    "daysLeft": 9999,
+                    "trafficUsed": "12.34 MiB",
+                    "trafficLimit": "0",
+                    "lifetimeTrafficUsed": "12.34 MiB",
+                    "lifetimeTrafficUsedBytes": "12939412",
+                    "trafficLimitBytes": "0",
+                    "trafficUsedBytes": "12939412",
+                    "username": "test_user",
+                    "expiresAt": "2099-12-31T23:59:59.000Z",
+                    "isActive": true,
+                    "userStatus": "ACTIVE",
+                    "trafficLimitStrategy": "NO_RESET",
+                    "tag": null
+                },
+                "subscriptionUrl": "https://example.com/api/sub/test-short-uuid",
+                "isHwidLimited": false,
+                "rawHosts": [
+                    {
+                        "remark": "Test Server 1",
+                        "address": "test-server1.example.com",
+                        "port": 12345,
+                        "protocol": "vless",
+                        "path": "",
+                        "host": "",
+                        "tls": "reality",
+                        "sni": "test1.example.com",
+                        "alpn": "",
+                        "publicKey": "TESTPUBLICKEY1",
+                        "fingerprint": "chrome",
+                        "shortId": "testshortid1",
+                        "spiderX": "/",
+                        "network": "tcp",
+                        "password": {
+                            "trojanPassword": "test-trojan-password-1",
+                            "vlessPassword": "test-vless-password-1",
+                            "ssPassword": "test-ss-password-1"
+                        },
+                        "muxParams": null,
+                        "sockoptParams": null,
+                        "dbData": {
+                            "rawInbound": {
+                                "tag": "TEST VLESS 1",
+                                "port": 12345,
+                                "listen": "0.0.0.0",
+                                "protocol": "vless",
+                                "settings": {"clients": [], "decryption": "none"},
+                                "sniffing": {"enabled": true, "routeOnly": false, "destOverride": ["http","tls","quic","fakedns"], "metadataOnly": false},
+                                "streamSettings": {
+                                    "network": "raw",
+                                    "security": "reality",
+                                    "rawSettings": {"acceptProxyProtocol": false},
+                                    "realitySettings": {
+                                        "show": false,
+                                        "xver": 0,
+                                        "target": "/dev/shm/rels.sock",
+                                        "spiderX": "/",
+                                        "shortIds": ["testshortid1"],
+                                        "privateKey": "testprivatekey1",
+                                        "fingerprint": "chrome",
+                                        "serverNames": ["test1.example.com"]
+                                    }
+                                }
+                            },
+                            "inboundTag": "TEST VLESS 1",
+                            "uuid": "11111111-2222-3333-4444-555555555555",
+                            "configProfileUuid": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+                            "configProfileInboundUuid": "aaaaaaaa-bbbb-cccc-dddd-ffffffffffff",
+                            "isDisabled": false,
+                            "viewPosition": 0,
+                            "remark": "Test Server 1",
+                            "isHidden": false,
+                            "tag": null,
+                            "vlessRouteId": null
+                        },
+                        "flow": "xtls-rprx-vision"
+                    },
+                    {
+                        "remark": "Test Server 2",
+                        "address": "test-server2.example.com",
+                        "port": 23456,
+                        "protocol": "vless",
+                        "path": "",
+                        "host": "",
+                        "tls": "reality",
+                        "sni": "test2.example.com",
+                        "alpn": "h3,h2,http/1.1",
+                        "publicKey": "TESTPUBLICKEY2",
+                        "fingerprint": "chrome",
+                        "shortId": "testshortid2",
+                        "spiderX": "/",
+                        "network": "tcp",
+                        "password": {
+                            "trojanPassword": "test-trojan-password-2",
+                            "vlessPassword": "test-vless-password-2",
+                            "ssPassword": "test-ss-password-2"
+                        },
+                        "serverDescription": "VGVzdCBTZXJ2ZXIgMg==",
+                        "muxParams": null,
+                        "sockoptParams": null,
+                        "dbData": {
+                            "rawInbound": {
+                                "tag": "TEST VLESS 2",
+                                "port": 23456,
+                                "listen": "0.0.0.0",
+                                "protocol": "vless",
+                                "settings": {"clients": [], "decryption": "none"},
+                                "sniffing": {"enabled": true, "routeOnly": false, "destOverride": ["http","tls","quic","fakedns"], "metadataOnly": false},
+                                "streamSettings": {
+                                    "network": "raw",
+                                    "sockopt": {"tcpNoDelay": true, "tcpFastOpen": true},
+                                    "security": "reality",
+                                    "rawSettings": {"acceptProxyProtocol": false},
+                                    "realitySettings": {
+                                        "show": false,
+                                        "xver": 0,
+                                        "target": "/dev/shm/rels.sock",
+                                        "spiderX": "/",
+                                        "shortIds": ["testshortid2","othertestshortid"],
+                                        "privateKey": "testprivatekey2",
+                                        "fingerprint": "chrome",
+                                        "serverNames": ["test2.example.com","other.example.com"]
+                                    }
+                                }
+                            },
+                            "inboundTag": "TEST VLESS 2",
+                            "uuid": "66666666-7777-8888-9999-000000000000",
+                            "configProfileUuid": "bbbbbbbb-cccc-dddd-eeee-ffffffffffff",
+                            "configProfileInboundUuid": "bbbbbbbb-cccc-dddd-eeee-111111111111",
+                            "isDisabled": false,
+                            "viewPosition": 4,
+                            "remark": "Test Server 2",
+                            "isHidden": false,
+                            "tag": null,
+                            "vlessRouteId": null
+                        },
+                        "flow": "xtls-rprx-vision"
+                    }
+                ],
+                "headers": {
+                    "content-disposition": "attachment; filename=test_user",
+                    "support-url": "https://support.example.com",
+                    "profile-title": "base64:dGVzdC10aXRsZQ==",
+                    "profile-update-interval": "1",
+                    "subscription-userinfo": "upload=0; download=12939412; total=0; expire=0",
+                    "announce": "base64:VGVzdCBhbm5vdW5jZW1lbnQgdGV4dA=="
+                }
+            })
+            .to_string(),
+        )
+        .create()
+}
+
 fn create_template_mock(server: &mut mockito::Server, template_type: &str) -> Mock {
     server
         .mock("GET", format!("/api/subscription-templates/{template_type}").as_str())
@@ -178,14 +399,14 @@ async fn test_subscriptions_get_all() {
     let (mut server, client) = setup_client().await;
     create_subscription_mock(&mut server);
 
-    let result = client.subscriptions.get_all_subscriptions(Some(10), Some(0)).await;
+    let result = client.subscriptions.get_all(Some(10), Some(0)).await;
     assert!(result.is_ok());
 
     let response = result.unwrap();
-    assert_eq!(response.response.total, 1);
-    assert_eq!(response.response.subscriptions.len(), 1);
-    assert_eq!(response.response.subscriptions[0].user.username, "test_user");
-    assert_eq!(response.response.subscriptions[0].user.short_uuid, "abc123");
+    assert_eq!(response.response.total, 19);
+    assert_eq!(response.response.subscriptions.len(), 3);
+    assert_eq!(response.response.subscriptions[0].user.username, "user1");
+    assert_eq!(response.response.subscriptions[0].user.short_uuid, "user_short_uuid_1");
 }
 
 #[tokio::test]
@@ -193,7 +414,7 @@ async fn test_subscription_settings() {
     let (mut server, client) = setup_client().await;
     create_subscription_settings_mock(&mut server);
 
-    let result = client.subscription_settings.get_settings().await;
+    let result = client.subscription_settings.get().await;
     assert!(result.is_ok());
 
     let response = result.unwrap();
@@ -206,7 +427,7 @@ async fn test_subscription_info() {
     let (mut server, client) = setup_client().await;
     create_subscription_not_found_mock(&mut server);
 
-    let result = client.subscriptions.get_subscription("test-invalid-uuid".to_string()).await;
+    let result = client.subscriptions.get("test-invalid-uuid".to_string()).await;
     assert!(result.is_err(), "Expected error for invalid UUID");
     if let Err(e) = result {
         assert_eq!(e.status_code, 404);
@@ -219,7 +440,7 @@ async fn test_subscription_by_username() {
     let (mut server, client) = setup_client().await;
     create_subscription_by_username_not_found_mock(&mut server);
 
-    let result = client.subscriptions.get_subscription_by_username("nonexistent_user_test_12345".to_string()).await;
+    let result = client.subscriptions.get_by_username("nonexistent_user_test_12345".to_string()).await;
     assert!(result.is_err(), "Expected error for non-existent username");
     if let Err(e) = result {
         assert_eq!(e.status_code, 404);
@@ -232,12 +453,26 @@ async fn test_raw_subscription_endpoint() {
     let (mut server, client) = setup_client().await;
     create_raw_subscription_not_found_mock(&mut server);
 
-    let result = client.subscriptions.get_raw_subscription_by_short_uuid("invalid-test-uuid".to_string()).await;
+    let result = client.subscriptions.get_raw_by_short_uuid("invalid-test-uuid".to_string(), None).await;
     assert!(result.is_err(), "Expected error for invalid UUID");
     if let Err(e) = result {
         assert_eq!(e.status_code, 404);
         assert!(e.message.expect("REASON").contains("Subscription not found"));
     }
+
+    create_raw_subscription_found_mock(&mut server);
+
+    let result = client.subscriptions.get_raw_by_short_uuid("test-uuid".to_string(), None).await;
+    assert!(result.is_ok(), "Expected Ok result for valid UUID: {result:?}");
+    let dto = result.unwrap();
+    assert_eq!(dto.user.username, "test_user");
+    assert_eq!(dto.user.traffic_used_bytes, "12939412");
+    assert_eq!(dto.subscription_url, "https://example.com/api/sub/test-short-uuid");
+    assert!(!dto.is_hwid_limited);
+    assert_eq!(dto.raw_hosts.len(), 2);
+    let first = &dto.raw_hosts[0];
+    assert_eq!(first.remark, Some("Test Server 1".to_string()));
+    assert_eq!(first.password.as_ref().and_then(|p| p.vless_password.clone()), Some("test-vless-password-1".to_string()));
 }
 
 #[tokio::test]
@@ -247,9 +482,9 @@ async fn test_multiple_template_requests() {
     create_template_mock(&mut server, "XRAY_JSON");
     create_template_mock(&mut server, "SINGBOX");
 
-    let clash_result = client.subscription_templates.get_template(SubscriptionTemplateType::Clash).await;
-    let xray_result = client.subscription_templates.get_template(SubscriptionTemplateType::XrayJson).await;
-    let singbox_result = client.subscription_templates.get_template(SubscriptionTemplateType::SingBox).await;
+    let clash_result = client.subscription_templates.get(SubscriptionTemplateType::Clash).await;
+    let xray_result = client.subscription_templates.get(SubscriptionTemplateType::XrayJson).await;
+    let singbox_result = client.subscription_templates.get(SubscriptionTemplateType::SingBox).await;
 
     assert!(clash_result.is_ok());
     assert!(xray_result.is_ok());
@@ -268,9 +503,9 @@ async fn test_concurrent_requests() {
     create_template_mock(&mut server, "SINGBOX");
 
     let (clash_result, xray_result, singbox_result) = tokio::join!(
-        client.subscription_templates.get_template(SubscriptionTemplateType::Clash),
-        client.subscription_templates.get_template(SubscriptionTemplateType::XrayJson),
-        client.subscription_templates.get_template(SubscriptionTemplateType::SingBox)
+        client.subscription_templates.get(SubscriptionTemplateType::Clash),
+        client.subscription_templates.get(SubscriptionTemplateType::XrayJson),
+        client.subscription_templates.get(SubscriptionTemplateType::SingBox)
     );
 
     assert!(clash_result.is_ok(), "Expected Ok result for Clash template: {clash_result:?}");
@@ -315,7 +550,7 @@ async fn test_client_without_token() {
 
     assert!(!client.base_url().is_empty());
 
-    let result = client.subscriptions.get_all_subscriptions(Some(10), Some(0)).await;
+    let result = client.subscriptions.get_all(Some(10), Some(0)).await;
     assert!(result.is_err());
 
     if let Err(e) = result {
@@ -371,7 +606,7 @@ async fn test_caddy_token_support() {
         )
         .create();
 
-    let result = client.subscription_settings.get_settings().await;
+    let result = client.subscription_settings.get().await;
     assert!(result.is_ok());
 
     let response = result.unwrap();
