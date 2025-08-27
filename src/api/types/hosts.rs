@@ -111,8 +111,16 @@ pub struct HostDto {
     pub is_disabled: bool,
     pub security_layer: SecurityLayerType,
     pub x_http_extra_params: Option<serde_json::Value>,
+    pub mux_params: Option<serde_json::Value>,
+    pub sockopt_params: Option<serde_json::Value>,
     pub inbound: HostInboundDto,
     pub server_description: Option<String>,
+    pub tag: Option<String>,
+    #[serde(default)]
+    pub is_hidden: bool,
+    #[serde(default)]
+    pub override_sni_from_address: bool,
+    pub vless_route_id: Option<i32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -130,7 +138,15 @@ pub struct CreateHostRequestDto {
     pub is_disabled: bool,
     pub security_layer: SecurityLayerType,
     pub x_http_extra_params: Option<serde_json::Value>,
+    pub mux_params: Option<serde_json::Value>,
+    pub sockopt_params: Option<serde_json::Value>,
     pub server_description: Option<String>,
+    pub tag: Option<String>,
+    #[serde(default)]
+    pub is_hidden: bool,
+    #[serde(default)]
+    pub override_sni_from_address: bool,
+    pub vless_route_id: Option<i32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -149,7 +165,13 @@ pub struct UpdateHostRequestDto {
     pub is_disabled: Option<bool>,
     pub security_layer: Option<SecurityLayerType>,
     pub x_http_extra_params: Option<serde_json::Value>,
+    pub mux_params: Option<serde_json::Value>,
+    pub sockopt_params: Option<serde_json::Value>,
     pub server_description: Option<String>,
+    pub tag: Option<String>,
+    pub is_hidden: Option<bool>,
+    pub override_sni_from_address: Option<bool>,
+    pub vless_route_id: Option<i32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
