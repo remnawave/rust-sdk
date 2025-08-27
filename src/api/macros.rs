@@ -35,8 +35,9 @@ macro_rules! api_request_common {
 
 #[macro_export]
 macro_rules! api_get {
-    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty) => {
+    (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $response_type:ty) => {
         impl $controller {
+            $(#[$attr])*
             #[doc = concat!("GET ", $path, " - ", stringify!($controller))]
             pub async fn $method_name(&self) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), $path);
@@ -45,13 +46,20 @@ macro_rules! api_get {
             }
         }
     };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, deprecate: $note:expr) => {
+        api_get!(@impl [deprecated(note = $note)] $controller, $method_name, $path, $response_type);
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty) => {
+        api_get!(@impl [] $controller, $method_name, $path, $response_type);
+    };
 }
 
 /// Macro for generating POST endpoints with body
 #[macro_export]
 macro_rules! api_post {
-    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty) => {
+    (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty) => {
         impl $controller {
+            $(#[$attr])*
             #[doc = concat!("POST ", $path, " - ", stringify!($controller))]
             pub async fn $method_name(&self, request: $request_type) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), $path);
@@ -60,13 +68,20 @@ macro_rules! api_post {
             }
         }
     };
+    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, deprecate: $note:expr) => {
+        api_post!(@impl [deprecated(note = $note)] $controller, $method_name, $path, $request_type, $response_type);
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty) => {
+        api_post!(@impl [] $controller, $method_name, $path, $request_type, $response_type);
+    };
 }
 
 /// Macro for generating POST endpoints with no body
 #[macro_export]
 macro_rules! api_post_no_body {
-    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty) => {
+    (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $response_type:ty) => {
         impl $controller {
+            $(#[$attr])*
             #[doc = concat!("POST ", $path, " - ", stringify!($controller))]
             pub async fn $method_name(&self) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), $path);
@@ -75,13 +90,20 @@ macro_rules! api_post_no_body {
             }
         }
     };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, deprecate: $note:expr) => {
+        api_post_no_body!(@impl [deprecated(note = $note)] $controller, $method_name, $path, $response_type);
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty) => {
+        api_post_no_body!(@impl [] $controller, $method_name, $path, $response_type);
+    };
 }
 
 /// Macro for generating GET endpoints with path parameters
 #[macro_export]
 macro_rules! api_get_with_path {
-    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, $($param:ident: $param_type:ty),*) => {
+    (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $response_type:ty, $($param:ident: $param_type:ty),*) => {
         impl $controller {
+            $(#[$attr])*
             #[doc = concat!("GET ", $path, " - ", stringify!($controller))]
             pub async fn $method_name(&self, $($param: $param_type),*) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), format!($path, $($param),*));
@@ -90,13 +112,20 @@ macro_rules! api_get_with_path {
             }
         }
     };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, deprecate: $note:expr, $($param:ident: $param_type:ty),*) => {
+        api_get_with_path!(@impl [deprecated(note = $note)] $controller, $method_name, $path, $response_type, $($param: $param_type),*);
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, $($param:ident: $param_type:ty),*) => {
+        api_get_with_path!(@impl [] $controller, $method_name, $path, $response_type, $($param: $param_type),*);
+    };
 }
 
 /// Macro for generating GET endpoints with query parameters
 #[macro_export]
 macro_rules! api_get_with_query {
-    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, $($param:ident: $param_type:ty),*) => {
+    (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $response_type:ty, $($param:ident: $param_type:ty),*) => {
         impl $controller {
+            $(#[$attr])*
             #[doc = concat!("GET ", $path, " - ", stringify!($controller))]
             pub async fn $method_name(&self, $($param: $param_type),*) -> Result<$response_type, $crate::ApiError> {
                 let mut url = format!("{}{}", self.client.base_url(), $path);
@@ -117,13 +146,20 @@ macro_rules! api_get_with_query {
             }
         }
     };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, deprecate: $note:expr, $($param:ident: $param_type:ty),*) => {
+        api_get_with_query!(@impl [deprecated(note = $note)] $controller, $method_name, $path, $response_type, $($param: $param_type),*);
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, $($param:ident: $param_type:ty),*) => {
+        api_get_with_query!(@impl [] $controller, $method_name, $path, $response_type, $($param: $param_type),*);
+    };
 }
 
 /// Macro for generating GET endpoints with both path and query parameters
 #[macro_export]
 macro_rules! api_get_with_path_and_query {
-    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, path_params: [$($path_param:ident: $path_param_type:ty),*], query_params: [$($query_param:ident: $query_param_type:ty),*]) => {
+    (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $response_type:ty, path_params: [$($path_param:ident: $path_param_type:ty),*], query_params: [$($query_param:ident: $query_param_type:ty),*]) => {
         impl $controller {
+            $(#[$attr])*
             #[doc = concat!("GET ", $path, " - ", stringify!($controller))]
             pub async fn $method_name(&self, $($path_param: $path_param_type,)* $($query_param: $query_param_type),*) -> Result<$response_type, $crate::ApiError> {
                 let mut url = format!("{}{}", self.client.base_url(), format!($path, $($path_param),*));
@@ -144,13 +180,20 @@ macro_rules! api_get_with_path_and_query {
             }
         }
     };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, deprecate: $note:expr, path_params: [$($path_param:ident: $path_param_type:ty),*], query_params: [$($query_param:ident: $query_param_type:ty),*]) => {
+        api_get_with_path_and_query!(@impl [deprecated(note = $note)] $controller, $method_name, $path, $response_type, path_params: [$($path_param: $path_param_type),*], query_params: [$($query_param: $query_param_type),*]);
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, path_params: [$($path_param:ident: $path_param_type:ty),*], query_params: [$($query_param:ident: $query_param_type:ty),*]) => {
+        api_get_with_path_and_query!(@impl [] $controller, $method_name, $path, $response_type, path_params: [$($path_param: $path_param_type),*], query_params: [$($query_param: $query_param_type),*]);
+    };
 }
 
 /// Macro for generating PATCH endpoints with request body
 #[macro_export]
 macro_rules! api_patch {
-    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty) => {
+    (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty) => {
         impl $controller {
+            $(#[$attr])*
             #[doc = concat!("PATCH ", $path, " - ", stringify!($controller))]
             pub async fn $method_name(&self, request: $request_type) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), $path);
@@ -159,13 +202,20 @@ macro_rules! api_patch {
             }
         }
     };
+    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, deprecate: $note:expr) => {
+        api_patch!(@impl [deprecated(note = $note)] $controller, $method_name, $path, $request_type, $response_type);
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty) => {
+        api_patch!(@impl [] $controller, $method_name, $path, $request_type, $response_type);
+    };
 }
 
 /// Macro for generating DELETE endpoints with path parameters
 #[macro_export]
 macro_rules! api_delete {
-    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, $param:ident: $param_type:ty) => {
+    (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $response_type:ty, $param:ident: $param_type:ty) => {
         impl $controller {
+            $(#[$attr])*
             #[doc = concat!("DELETE ", $path, " - ", stringify!($controller))]
             pub async fn $method_name(&self, $param: $param_type) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), $path.replace(&format!("{{{}}}", stringify!($param)), &$param.to_string()));
@@ -174,12 +224,19 @@ macro_rules! api_delete {
             }
         }
     };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, deprecate: $note:expr, $param:ident: $param_type:ty) => {
+        api_delete!(@impl [deprecated(note = $note)] $controller, $method_name, $path, $response_type, $param: $param_type);
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, $param:ident: $param_type:ty) => {
+        api_delete!(@impl [] $controller, $method_name, $path, $response_type, $param: $param_type);
+    };
 }
 
 #[macro_export]
 macro_rules! api_post_with_path {
-    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, $($param:ident: $param_type:ty),*) => {
+    (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, $($param:ident: $param_type:ty),*) => {
         impl $controller {
+            $(#[$attr])*
             #[doc = concat!("POST ", $path, " - ", stringify!($controller))]
             pub async fn $method_name(&self, $($param: $param_type,)* request: $request_type) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), format!($path, $($param),*));
@@ -188,13 +245,20 @@ macro_rules! api_post_with_path {
             }
         }
     };
+    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, deprecate: $note:expr, $($param:ident: $param_type:ty),*) => {
+        api_post_with_path!(@impl [deprecated(note = $note)] $controller, $method_name, $path, $request_type, $response_type, $($param: $param_type),*);
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, $($param:ident: $param_type:ty),*) => {
+        api_post_with_path!(@impl [] $controller, $method_name, $path, $request_type, $response_type, $($param: $param_type),*);
+    };
 }
 
 /// Macro for generating POST endpoints with path parameters and no request body
 #[macro_export]
 macro_rules! api_post_with_path_no_body {
-    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, $($param:ident: $param_type:ty),*) => {
+    (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $response_type:ty, $($param:ident: $param_type:ty),*) => {
         impl $controller {
+            $(#[$attr])*
             #[doc = concat!("POST ", $path, " - ", stringify!($controller))]
             pub async fn $method_name(&self, $($param: $param_type),*) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), format!($path, $($param),*));
@@ -203,13 +267,20 @@ macro_rules! api_post_with_path_no_body {
             }
         }
     };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, deprecate: $note:expr, $($param:ident: $param_type:ty),*) => {
+        api_post_with_path_no_body!(@impl [deprecated(note = $note)] $controller, $method_name, $path, $response_type, $($param: $param_type),*);
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $response_type:ty, $($param:ident: $param_type:ty),*) => {
+        api_post_with_path_no_body!(@impl [] $controller, $method_name, $path, $response_type, $($param: $param_type),*);
+    };
 }
 
 /// Macro for generating PATCH endpoints with path parameters
 #[macro_export]
 macro_rules! api_patch_with_path {
-    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, $($param:ident: $param_type:ty),*) => {
+    (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, $($param:ident: $param_type:ty),*) => {
         impl $controller {
+            $(#[$attr])*
             #[doc = concat!("PATCH ", $path, " - ", stringify!($controller))]
             pub async fn $method_name(&self, $($param: $param_type,)* request: $request_type) -> Result<$response_type, $crate::ApiError> {
                 let url = format!("{}{}", self.client.base_url(), format!($path, $($param),*));
@@ -217,6 +288,12 @@ macro_rules! api_patch_with_path {
                 self.handle_response(response, url).await
             }
         }
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, deprecate: $note:expr, $($param:ident: $param_type:ty),*) => {
+        api_patch_with_path!(@impl [deprecated(note = $note)] $controller, $method_name, $path, $request_type, $response_type, $($param: $param_type),*);
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, $($param:ident: $param_type:ty),*) => {
+        api_patch_with_path!(@impl [] $controller, $method_name, $path, $request_type, $response_type, $($param: $param_type),*);
     };
 }
 
