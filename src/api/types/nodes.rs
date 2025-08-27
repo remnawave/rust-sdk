@@ -46,6 +46,12 @@ pub struct ReorderNodeRequestDto {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct RestartAllNodesRequestBodyDto {
+    pub force_restart: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CreateNodeResponseDto {
     pub response: NodeDto,
 }
@@ -201,6 +207,7 @@ pub struct RestartAllNodesData {
 pub struct NodesUsageData {
     pub node_uuid: Uuid,
     pub node_name: String,
+    pub node_country_code: String,
     pub total: usize,
     pub total_download: usize,
     pub total_upload: usize,

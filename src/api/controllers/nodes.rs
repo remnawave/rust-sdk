@@ -13,7 +13,7 @@ api_delete!(NodesController, delete_node, "/api/nodes/{}", DeleteNodeResponseDto
 api_post_with_path_no_body!(NodesController, enable_node, "/api/nodes/{}/actions/enable", EnableNodeResponseDto, uuid: Uuid);
 api_post_with_path_no_body!(NodesController, disable_node, "/api/nodes/{}/actions/disable", DisableNodeResponseDto, uuid: Uuid);
 api_post_with_path_no_body!(NodesController, restart_node, "/api/nodes/{}/actions/restart", RestartNodeResponseDto, uuid: Uuid);
-api_post_no_body!(NodesController, restart_all_nodes, "/api/nodes/actions/restart-all", RestartAllNodesResponseDto);
+api_post!(NodesController, restart_all_nodes, "/api/nodes/actions/restart-all", RestartAllNodesRequestBodyDto, RestartAllNodesResponseDto);
 api_post!(NodesController, reorder_nodes, "/api/nodes/actions/reorder", ReorderNodeRequestDto, ReorderNodeResponseDto);
 
 api_controller!(NodesUsageController);

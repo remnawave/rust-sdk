@@ -11,4 +11,5 @@ api_patch!(InternalSquadsController, update_internal_squad, "/api/internal-squad
 api_delete!(InternalSquadsController, delete_internal_squad, "/api/internal-squads/{}", DeleteInternalSquadResponseDto, uuid: Uuid);
 
 api_post_with_path_no_body!(InternalSquadsController, bulk_add_users_to_internal_squad, "/api/internal-squads/{}/bulk-actions/add-users", AddUsersToInternalSquadResponseDto, uuid: Uuid);
-api_delete!(InternalSquadsController, bulk_remove_users_from_internal_squad, "/api/internal-squads/{}/bulk-actions/remove-users", RemoveUsersFromInternalSquadResponseDto, uuid: Uuid);
+api_post!(InternalSquadsController, remove_users_from_internal_squad, "/api/internal-squads/{uuid}/bulk-actions/remove-users", RemoveUsersFromInternalSquadRequestDto, RemoveUsersFromInternalSquadResponseDto);
+api_get!(InternalSquadsController, get_internal_squad_accessible_nodes, "/api/internal-squads/{uuid}/accessible-nodes", GetInternalSquadAccessibleNodesResponseDto);

@@ -17,3 +17,4 @@ api_post!(HostsController, bulk_disable_hosts, "/api/hosts/bulk/disable", BulkDi
 api_post!(HostsController, bulk_enable_hosts, "/api/hosts/bulk/enable", BulkEnableHostsRequestDto, BulkEnableHostsResponseDto);
 api_post!(HostsController, bulk_set_inbound_to_hosts, "/api/hosts/bulk/set-inbound", SetInboundToManyHostsRequestDto, SetInboundToManyHostsResponseDto);
 api_post!(HostsController, bulk_set_port_to_hosts, "/api/hosts/bulk/set-port", SetPortToManyHostsRequestDto, SetPortToManyHostsResponseDto);
+api_get!(HostsController, get_all_host_tags, "/api/hosts/tags", GetAllHostTagsResponseDto);
