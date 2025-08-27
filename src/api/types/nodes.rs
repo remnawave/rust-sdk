@@ -46,6 +46,12 @@ pub struct ReorderNodeRequestDto {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct RestartAllNodesRequestBodyDto {
+    pub force_restart: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CreateNodeResponseDto {
     pub response: NodeDto,
 }
