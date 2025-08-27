@@ -5,6 +5,10 @@ use crate::api::types::hwid::*;
 
 api_controller!(HwidUserDevicesController);
 
-api_post!(HwidUserDevicesController, create_user_hwid_device, "/api/hwid/devices", CreateUserHwidDeviceRequestDto, CreateUserHwidDeviceResponseDto);
-api_post!(HwidUserDevicesController, delete_user_hwid_device, "/api/hwid/devices/delete", DeleteUserHwidDeviceRequestDto, DeleteUserHwidDeviceResponseDto);
-api_get_with_path!(HwidUserDevicesController, get_user_hwid_devices, "/api/hwid/devices/{}", GetUserHwidDevicesResponseDto, user_uuid: Uuid);
+api_post!(HwidUserDevicesController, create, "/api/hwid/devices", CreateUserHwidDeviceRequestDto, CreateUserHwidDeviceResponseDto);
+api_post!(HwidUserDevicesController, delete, "/api/hwid/devices/delete", DeleteUserHwidDeviceRequestDto, DeleteUserHwidDeviceResponseDto);
+api_get_with_path!(HwidUserDevicesController, get, "/api/hwid/devices/{}", GetUserHwidDevicesResponseDto, user_uuid: Uuid);
+
+api_post!(HwidUserDevicesController, create_user_hwid_device, "/api/hwid/devices", CreateUserHwidDeviceRequestDto, CreateUserHwidDeviceResponseDto, deprecate: "Use create");
+api_post!(HwidUserDevicesController, delete_user_hwid_device, "/api/hwid/devices/delete", DeleteUserHwidDeviceRequestDto, DeleteUserHwidDeviceResponseDto, deprecate: "Use delete");
+api_get_with_path!(HwidUserDevicesController, get_user_hwid_devices, "/api/hwid/devices/{}", GetUserHwidDevicesResponseDto, deprecate: "Use get", user_uuid: Uuid);
