@@ -262,3 +262,13 @@ pub struct SetInboundToManyHostsResponseDto {
 pub struct SetPortToManyHostsResponseDto {
     pub response: Vec<HostDto>,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GetAllHostTagsResponseDto {
+    pub response: HostTagsData,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct HostTagsData {
+    pub tags: Vec<String>,
+}
