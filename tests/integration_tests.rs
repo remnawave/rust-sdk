@@ -210,6 +210,7 @@ fn create_raw_subscription_found_mock(server: &mut mockito::Server) -> Mock {
         .with_header("content-type", "application/json")
         .with_body(
             json!({
+                "response": {
                 "user": {
                     "shortUuid": "test-short-uuid",
                     "daysLeft": 9999,
@@ -358,6 +359,7 @@ fn create_raw_subscription_found_mock(server: &mut mockito::Server) -> Mock {
                     "subscription-userinfo": "upload=0; download=12939412; total=0; expire=0",
                     "announce": "base64:VGVzdCBhbm5vdW5jZW1lbnQgdGV4dA=="
                 }
+            }
             })
             .to_string(),
         )
@@ -465,12 +467,12 @@ async fn test_raw_subscription_endpoint() {
     let result = client.subscriptions.get_raw_by_short_uuid("test-uuid".to_string(), None).await;
     assert!(result.is_ok(), "Expected Ok result for valid UUID: {result:?}");
     let dto = result.unwrap();
-    assert_eq!(dto.user.username, "test_user");
-    assert_eq!(dto.user.traffic_used_bytes, "12939412");
-    assert_eq!(dto.subscription_url, "https://example.com/api/sub/test-short-uuid");
-    assert!(!dto.is_hwid_limited);
-    assert_eq!(dto.raw_hosts.len(), 2);
-    let first = &dto.raw_hosts[0];
+    assert_eq!(dto.response.user.username, "test_user");
+    assert_eq!(dto.response.user.traffic_used_bytes, "12939412");
+    assert_eq!(dto.response.subscription_url, "https://example.com/api/sub/test-short-uuid");
+    assert!(!dto.response.is_hwid_limited);
+    assert_eq!(dto.response.raw_hosts.len(), 2);
+    let first = &dto.response.raw_hosts[0];
     assert_eq!(first.remark, Some("Test Server 1".to_string()));
     assert_eq!(first.password.as_ref().and_then(|p| p.vless_password.clone()), Some("test-vless-password-1".to_string()));
 }
