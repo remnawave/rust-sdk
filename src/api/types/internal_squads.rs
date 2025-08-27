@@ -59,6 +59,11 @@ pub struct AddUsersToInternalSquadResponseDto {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct RemoveUsersFromInternalSquadRequestDto {
+    pub uuids: Vec<Uuid>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RemoveUsersFromInternalSquadResponseDto {
     pub response: BulkActionResponseData,
 }
@@ -85,4 +90,25 @@ pub struct InternalSquadDto {
 pub struct InternalSquadInfo {
     pub members_count: usize,
     pub inbounds_count: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GetInternalSquadAccessibleNodesResponseDto {
+    pub response: InternalSquadAccessibleNodesData,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct InternalSquadAccessibleNodesData {
+    pub squad_uuid: Uuid,
+    pub accessible_nodes: Vec<AccessibleNodeDto>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct AccessibleNodeDto {
+    pub uuid: Uuid,
+    pub node_name: String,
+    pub country_code: String,
+    pub config_profile_uuid: Uuid,
 }
