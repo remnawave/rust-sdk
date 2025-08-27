@@ -59,11 +59,6 @@ pub struct AddUsersToInternalSquadResponseDto {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct RemoveUsersFromInternalSquadRequestDto {
-    pub uuids: Vec<Uuid>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RemoveUsersFromInternalSquadResponseDto {
     pub response: BulkActionResponseData,
 }
@@ -111,4 +106,6 @@ pub struct AccessibleNodeDto {
     pub node_name: String,
     pub country_code: String,
     pub config_profile_uuid: Uuid,
+    pub config_profile_name: String,
+    pub active_inbounds: Vec<Uuid>,
 }
