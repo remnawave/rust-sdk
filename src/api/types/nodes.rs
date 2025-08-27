@@ -207,6 +207,7 @@ pub struct RestartAllNodesData {
 pub struct NodesUsageData {
     pub node_uuid: Uuid,
     pub node_name: String,
+    pub node_country_code: String,
     pub total: usize,
     pub total_download: usize,
     pub total_upload: usize,
