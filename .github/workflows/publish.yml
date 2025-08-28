@@ -70,13 +70,27 @@ jobs:
             cargo publish
           fi
 
-      - name: Create GitHub Release
+      - name: Generate release notes from CHANGELOG.md
         if: success() && github.event_name == 'push'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "Preparing release notes for version $VERSION"
+          awk -v ver="$VERSION" '
+            BEGIN { print "# Changelog\n" }
+            $0 ~ "^## \\[" ver "\\]" { p=1; print; next }
+            p && $0 ~ /^## / { exit }
+            p { print }
+          ' CHANGELOG.md > RELEASE_BODY.md
+          echo "Generated release body:" && sed -n '1,120p' RELEASE_BODY.md
+
+      - name: Create GitHub Release with changelog
+        if: success() && github.event_name == 'push'
+        uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
-          release_name: Release ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          body_path: RELEASE_BODY.md
+          files: |
+            CHANGELOG.md
           draft: false
           prerelease: false
