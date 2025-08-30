@@ -176,15 +176,61 @@ pub struct AllSubscriptionsResponse {
 #[serde(rename_all = "camelCase")]
 pub struct BasicSubscription {
     pub is_found: bool,
-    pub user: SubscriptionUser,
+    pub user: BasicSubscriptionUser,
     pub links: Vec<String>,
     pub ss_conf_links: HashMap<String, String>,
     pub subscription_url: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct BasicSubscriptionUser {
+    pub short_uuid: String,
+    pub days_left: usize,
+    pub traffic_used: String,
+    pub traffic_limit: String,
+    pub username: String,
+    pub expires_at: DateTime<Utc>,
+    pub is_active: bool,
+    pub user_status: UserStatus,
+    pub traffic_limit_strategy: TrafficLimitStrategy,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct GetSubscriptionByUsernameResponseDto {
     pub response: UsernameSubscriptionResponse,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GetSubscriptionByShortUuidResponseDto {
+    pub response: ShortUuidSubscriptionResponse,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct ShortUuidSubscriptionResponse {
+    pub is_found: bool,
+    pub user: SubscriptionUser,
+    pub links: Vec<String>,
+    pub ss_conf_links: HashMap<String, String>,
+    pub subscription_url: String,
+    pub happ: HappConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GetSubscriptionByUuidResponseDto {
+    pub response: UuidSubscriptionResponse,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct UuidSubscriptionResponse {
+    pub is_found: bool,
+    pub user: SubscriptionUser,
+    pub links: Vec<String>,
+    pub ss_conf_links: HashMap<String, String>,
+    pub subscription_url: String,
+    pub happ: HappConfig,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

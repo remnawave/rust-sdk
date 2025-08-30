@@ -26,6 +26,8 @@ impl SubscriptionsController {
 
 api_get_with_query!(SubscriptionsController, get_all, "/api/subscriptions", GetAllSubscriptionsResponseDto, size: Option<usize>, start: Option<usize>);
 api_get_with_path!(SubscriptionsController, get_by_username, "/api/subscriptions/by-username/{}", GetSubscriptionByUsernameResponseDto, username: String);
+api_get_with_path!(SubscriptionsController, get_by_short_uuid, "/api/subscriptions/by-short-uuid/{}", GetSubscriptionByShortUuidResponseDto, short_uuid: String);
+api_get_with_path!(SubscriptionsController, get_by_uuid, "/api/subscriptions/by-uuid/{}", GetSubscriptionByUuidResponseDto, uuid: String);
 
 api_get_with_path!(SubscriptionsController, get_subscription_info_by_short_uuid, "/api/sub/{}/info", GetSubscriptionInfoResponseDto, deprecate: "Use get_info_by_short_uuid", short_uuid: String);
 api_get_with_path_and_query!(SubscriptionsController, get_raw_subscription_by_short_uuid, "/api/sub/{}/raw", GetRawSubscriptionByShortUuidResponseDto, deprecate: "Use get_raw_by_short_uuid", path_params: [short_uuid: String], query_params: [with_disabled_hosts: Option<bool>]);
