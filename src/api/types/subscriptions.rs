@@ -241,6 +241,7 @@ pub struct UsernameSubscriptionResponse {
     pub links: Vec<String>,
     pub ss_conf_links: HashMap<String, String>,
     pub subscription_url: String,
+    pub happ: HappConfig,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
