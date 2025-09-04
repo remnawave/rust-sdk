@@ -4,7 +4,6 @@ use crate::api::types::subscriptions::*;
 api_controller!(SubscriptionsController);
 
 api_get_with_path!(SubscriptionsController, get_info_by_short_uuid, "/api/sub/{}/info", GetSubscriptionInfoResponseDto, short_uuid: String);
-api_get_with_path_and_query!(SubscriptionsController, get_raw_by_short_uuid, "/api/sub/{}/raw", GetRawSubscriptionByShortUuidResponseDto, path_params: [short_uuid: String], query_params: [with_disabled_hosts: Option<bool>]);
 
 api_get_with_path!(SubscriptionsController, get, "/api/sub/{}", String, short_uuid: String);
 api_get_with_path!(SubscriptionsController, get_by_client_type, "/api/sub/{}/{}", String, short_uuid: String, client_type: SubscriptionClientType);
@@ -28,9 +27,9 @@ api_get_with_query!(SubscriptionsController, get_all, "/api/subscriptions", GetA
 api_get_with_path!(SubscriptionsController, get_by_username, "/api/subscriptions/by-username/{}", GetSubscriptionByUsernameResponseDto, username: String);
 api_get_with_path!(SubscriptionsController, get_by_short_uuid, "/api/subscriptions/by-short-uuid/{}", GetSubscriptionByShortUuidResponseDto, short_uuid: String);
 api_get_with_path!(SubscriptionsController, get_by_uuid, "/api/subscriptions/by-uuid/{}", GetSubscriptionByUuidResponseDto, uuid: String);
+api_get_with_path_and_query!(SubscriptionsController, get_raw_by_short_uuid, "/api/subscriptions/by-short-uuid/{}/raw", GetRawSubscriptionByShortUuidResponseDto, path_params: [short_uuid: String], query_params: [with_disabled_hosts: Option<bool>]);
 
 api_get_with_path!(SubscriptionsController, get_subscription_info_by_short_uuid, "/api/sub/{}/info", GetSubscriptionInfoResponseDto, deprecate: "Use get_info_by_short_uuid", short_uuid: String);
-api_get_with_path_and_query!(SubscriptionsController, get_raw_subscription_by_short_uuid, "/api/sub/{}/raw", GetRawSubscriptionByShortUuidResponseDto, deprecate: "Use get_raw_by_short_uuid", path_params: [short_uuid: String], query_params: [with_disabled_hosts: Option<bool>]);
 api_get_with_path!(SubscriptionsController, get_subscription, "/api/sub/{}", String, deprecate: "Use get", short_uuid: String);
 api_get_with_path!(SubscriptionsController, get_subscription_by_client_type, "/api/sub/{}/{}", String, deprecate: "Use get_by_client_type", short_uuid: String, client_type: SubscriptionClientType);
 api_get_with_query!(SubscriptionsController, get_all_subscriptions, "/api/subscriptions", GetAllSubscriptionsResponseDto, deprecate: "Use get_all", size: Option<usize>, start: Option<usize>);

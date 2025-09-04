@@ -1,3 +1,4 @@
+use crate::api::types::users::{InternalSquad, LastConnectedNode};
 use crate::types::{TrafficLimitStrategy, UserStatus};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -78,7 +79,7 @@ pub struct RawHost {
     pub fingerprint: Option<String>,
     pub host: Option<String>,
     pub network: Option<String>,
-    pub password: Option<HostPasswords>,
+    pub password: HostPasswords,
     pub path: Option<String>,
     pub public_key: Option<String>,
     pub port: Option<u16>,
@@ -123,11 +124,56 @@ pub struct SsOptions {
 #[serde(rename_all = "camelCase")]
 pub struct HostPasswords {
     #[serde(rename = "trojanPassword")]
-    pub trojan_password: Option<String>,
+    pub trojan: String,
     #[serde(rename = "vlessPassword")]
-    pub vless_password: Option<String>,
+    pub vless: String,
     #[serde(rename = "ssPassword")]
-    pub ss_password: Option<String>,
+    pub ss: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct RawSubscriptionUser {
+    pub uuid: Uuid,
+    pub short_uuid: String,
+    pub username: String,
+    pub status: UserStatus,
+    pub used_traffic_bytes: u64,
+    pub lifetime_used_traffic_bytes: u64,
+    pub traffic_limit_bytes: i32,
+    pub traffic_limit_strategy: TrafficLimitStrategy,
+    pub sub_last_user_agent: Option<String>,
+    pub sub_last_opened_at: Option<DateTime<Utc>>,
+    pub expire_at: DateTime<Utc>,
+    pub online_at: Option<DateTime<Utc>>,
+    pub sub_revoked_at: Option<DateTime<Utc>>,
+    pub last_traffic_reset_at: Option<DateTime<Utc>>,
+    pub trojan_password: String,
+    pub vless_uuid: Uuid,
+    pub ss_password: String,
+    pub description: Option<String>,
+    pub tag: Option<String>,
+    pub telegram_id: Option<i64>,
+    pub email: Option<String>,
+    pub hwid_device_limit: Option<i32>,
+    pub first_connected_at: Option<DateTime<Utc>>,
+    pub last_triggered_threshold: i32,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub active_internal_squads: Vec<InternalSquad>,
+    pub subscription_url: String,
+    pub last_connected_node: Option<LastConnectedNode>,
+    pub happ: HappConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct ConvertedUserInfo {
+    pub days_left: f64,
+    pub traffic_limit: String,
+    pub traffic_used: String,
+    pub lifetime_traffic_used: String,
+    pub is_hwid_limited: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -146,19 +192,18 @@ pub struct GetSubscriptionInfoResponseDto {
     pub response: Subscription,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct GetRawSubscriptionByShortUuidResponseDto {
     pub response: RawSubscriptionResponse,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct RawSubscriptionResponse {
-    pub user: SubscriptionUser,
-    pub subscription_url: String,
-    pub raw_hosts: Vec<RawHost>,
+    pub user: RawSubscriptionUser,
+    pub converted_user_info: ConvertedUserInfo,
     pub headers: HashMap<String, String>,
-    pub is_hwid_limited: bool,
+    pub raw_hosts: Vec<RawHost>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

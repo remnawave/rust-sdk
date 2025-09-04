@@ -189,7 +189,7 @@ fn create_subscription_by_username_not_found_mock(server: &mut mockito::Server) 
 
 fn create_raw_subscription_not_found_mock(server: &mut mockito::Server) -> Mock {
     server
-        .mock("GET", "/api/sub/invalid-test-uuid/raw")
+        .mock("GET", "/api/subscriptions/by-short-uuid/invalid-test-uuid/raw")
         .with_status(404)
         .with_header("content-type", "application/json")
         .with_body(
@@ -205,79 +205,103 @@ fn create_raw_subscription_not_found_mock(server: &mut mockito::Server) -> Mock 
 
 fn create_raw_subscription_found_mock(server: &mut mockito::Server) -> Mock {
     server
-        .mock("GET", "/api/sub/test-uuid/raw")
+        .mock("GET", "/api/subscriptions/by-short-uuid/test-uuid/raw")
         .with_status(200)
         .with_header("content-type", "application/json")
         .with_body(
             json!({
                 "response": {
-                "user": {
-                    "shortUuid": "test-short-uuid",
-                    "daysLeft": 9999,
-                    "trafficUsed": "12.34 MiB",
-                    "trafficLimit": "0",
-                    "lifetimeTrafficUsed": "12.34 MiB",
-                    "lifetimeTrafficUsedBytes": "12939412",
-                    "trafficLimitBytes": "0",
-                    "trafficUsedBytes": "12939412",
-                    "username": "test_user",
-                    "expiresAt": "2099-12-31T23:59:59.000Z",
-                    "isActive": true,
-                    "userStatus": "ACTIVE",
-                    "trafficLimitStrategy": "NO_RESET",
-                    "tag": null
-                },
-                "subscriptionUrl": "https://example.com/api/sub/test-short-uuid",
-                "isHwidLimited": false,
-                "rawHosts": [
-                    {
-                        "remark": "Test Server 1",
-                        "address": "test-server1.example.com",
-                        "port": 12345,
-                        "protocol": "vless",
-                        "path": "",
-                        "host": "",
-                        "tls": "reality",
-                        "sni": "test1.example.com",
-                        "alpn": "",
-                        "publicKey": "TESTPUBLICKEY1",
-                        "fingerprint": "chrome",
-                        "shortId": "testshortid1",
-                        "spiderX": "/",
-                        "network": "tcp",
-                        "password": {
-                            "trojanPassword": "test-trojan-password-1",
-                            "vlessPassword": "test-vless-password-1",
-                            "ssPassword": "test-ss-password-1"
-                        },
-                        "muxParams": null,
-                        "sockoptParams": null,
-                        "dbData": {
-                            "rawInbound": {
-                                "tag": "TEST VLESS 1",
-                                "port": 12345,
-                                "listen": "0.0.0.0",
-                                "protocol": "vless",
-                                "settings": {"clients": [], "decryption": "none"},
-                                "sniffing": {"enabled": true, "routeOnly": false, "destOverride": ["http","tls","quic","fakedns"], "metadataOnly": false},
-                                "streamSettings": {
-                                    "network": "raw",
-                                    "security": "reality",
-                                    "rawSettings": {"acceptProxyProtocol": false},
-                                    "realitySettings": {
-                                        "show": false,
-                                        "xver": 0,
-                                        "target": "/dev/shm/rels.sock",
-                                        "spiderX": "/",
-                                        "shortIds": ["testshortid1"],
-                                        "privateKey": "testprivatekey1",
-                                        "fingerprint": "chrome",
-                                        "serverNames": ["test1.example.com"]
-                                    }
-                                }
+                    "user": {
+                        "uuid": "11111111-2222-3333-4444-555555555555",
+                        "shortUuid": "test-short-uuid",
+                        "username": "test_user",
+                        "status": "ACTIVE",
+                        "usedTrafficBytes": 12939412,
+                        "lifetimeUsedTrafficBytes": 12939412,
+                        "trafficLimitBytes": 0,
+                        "trafficLimitStrategy": "NO_RESET",
+                        "subLastUserAgent": null,
+                        "subLastOpenedAt": null,
+                        "expireAt": "2099-12-31T23:59:59.000Z",
+                        "onlineAt": null,
+                        "subRevokedAt": null,
+                        "lastTrafficResetAt": null,
+                        "trojanPassword": "test-trojan-password",
+                        "vlessUuid": "11111111-2222-3333-4444-555555555555",
+                        "ssPassword": "test-ss-password",
+                        "description": null,
+                        "tag": null,
+                        "telegramId": null,
+                        "email": null,
+                        "hwidDeviceLimit": null,
+                        "firstConnectedAt": null,
+                        "lastTriggeredThreshold": 0,
+                        "createdAt": "2024-01-01T00:00:00.000Z",
+                        "updatedAt": "2024-01-01T00:00:00.000Z",
+                        "activeInternalSquads": [],
+                        "subscriptionUrl": "https://example.com/api/sub/test-short-uuid",
+                        "lastConnectedNode": null,
+                        "happ": {
+                            "cryptoLink": "happ://test-crypto-link"
+                        }
+                    },
+                    "convertedUserInfo": {
+                        "daysLeft": 9999.0,
+                        "trafficLimit": "0",
+                        "trafficUsed": "12.34 MiB",
+                        "lifetimeTrafficUsed": "12.34 MiB",
+                        "isHwidLimited": false
+                    },
+                    "headers": {},
+                    "rawHosts": [
+                        {
+                            "remark": "Test Server 1",
+                            "address": "test-server1.example.com",
+                            "port": 12345,
+                            "protocol": "vless",
+                            "path": "",
+                            "host": "",
+                            "tls": "reality",
+                            "sni": "test1.example.com",
+                            "alpn": "",
+                            "publicKey": "TESTPUBLICKEY1",
+                            "fingerprint": "chrome",
+                            "shortId": "testshortid1",
+                            "spiderX": "/",
+                            "network": "tcp",
+                            "password": {
+                                "trojanPassword": "test-trojan-password-1",
+                                "vlessPassword": "test-vless-password-1",
+                                "ssPassword": "test-ss-password-1"
                             },
-                            "inboundTag": "TEST VLESS 1",
-                            "uuid": "11111111-2222-3333-4444-555555555555",
+                            "muxParams": null,
+                            "sockoptParams": null,
+                            "dbData": {
+                                "rawInbound": {
+                                    "tag": "TEST VLESS 1",
+                                    "port": 12345,
+                                    "listen": "0.0.0.0",
+                                    "protocol": "vless",
+                                    "settings": {"clients": [], "decryption": "none"},
+                                    "sniffing": {"enabled": true, "routeOnly": false, "destOverride": ["http","tls","quic","fakedns"], "metadataOnly": false},
+                                    "streamSettings": {
+                                        "network": "raw",
+                                        "security": "reality",
+                                        "rawSettings": {"acceptProxyProtocol": false},
+                                        "realitySettings": {
+                                            "show": false,
+                                            "xver": 0,
+                                            "target": "/dev/shm/rels.sock",
+                                            "spiderX": "/",
+                                            "shortIds": ["testshortid1"],
+                                            "privateKey": "testprivatekey1",
+                                            "fingerprint": "chrome",
+                                            "serverNames": ["test1.example.com"]
+                                        }
+                                    }
+                                },
+                                "inboundTag": "TEST VLESS 1",
+                                "uuid": "11111111-2222-3333-4444-555555555555",
                             "configProfileUuid": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
                             "configProfileInboundUuid": "aaaaaaaa-bbbb-cccc-dddd-ffffffffffff",
                             "isDisabled": false,
@@ -468,13 +492,13 @@ async fn test_raw_subscription_endpoint() {
     assert!(result.is_ok(), "Expected Ok result for valid UUID: {result:?}");
     let dto = result.unwrap();
     assert_eq!(dto.response.user.username, "test_user");
-    assert_eq!(dto.response.user.traffic_used_bytes, "12939412");
-    assert_eq!(dto.response.subscription_url, "https://example.com/api/sub/test-short-uuid");
-    assert!(!dto.response.is_hwid_limited);
+    assert_eq!(dto.response.user.used_traffic_bytes, 12939412);
+    assert_eq!(dto.response.user.subscription_url, "https://example.com/api/sub/test-short-uuid");
+    assert!(!dto.response.converted_user_info.is_hwid_limited);
     assert_eq!(dto.response.raw_hosts.len(), 2);
     let first = &dto.response.raw_hosts[0];
     assert_eq!(first.remark, Some("Test Server 1".to_string()));
-    assert_eq!(first.password.as_ref().and_then(|p| p.vless_password.clone()), Some("test-vless-password-1".to_string()));
+    assert_eq!(first.password.vless, "test-vless-password-1");
 }
 
 #[tokio::test]
