@@ -1,6 +1,6 @@
 [package]
 name = "remnawave"
-version = "2.1.7"
+version = "2.1.8"
 authors = ["vffuunnyy <vffuunnyy@gmail.com>"]
 description = "Rust SDK for Remnawave API - A comprehensive client library for interacting with Remnawave services"
 license = "MIT"
