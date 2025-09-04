@@ -614,3 +614,41 @@ async fn test_caddy_token_support() {
     let response = result.unwrap();
     assert_eq!(response.response.uuid, Uuid::from_str("3fa85f64-5717-4562-b3fc-2c963f66afa6").unwrap());
 }
+
+#[tokio::test]
+async fn test_x25519_keypairs_endpoint() {
+    let (mut server, client) = setup_client().await;
+
+    let _mock = server
+        .mock("GET", "/api/system/tools/x25519/generate")
+        .with_status(200)
+        .with_header("content-type", "application/json")
+        .with_body(
+            json!({
+                "response": {
+                    "keypairs": [
+                        {
+                            "publicKey": "test_public_key_1",
+                            "privateKey": "test_private_key_1"
+                        },
+                        {
+                            "publicKey": "test_public_key_2",
+                            "privateKey": "test_private_key_2"
+                        }
+                    ]
+                }
+            })
+            .to_string(),
+        )
+        .create();
+
+    let result = client.system.get_x25519_keypairs().await;
+    assert!(result.is_ok());
+
+    let response = result.unwrap();
+    assert_eq!(response.response.keypairs.len(), 2);
+    assert_eq!(response.response.keypairs[0].public_key, "test_public_key_1");
+    assert_eq!(response.response.keypairs[0].private_key, "test_private_key_1");
+    assert_eq!(response.response.keypairs[1].public_key, "test_public_key_2");
+    assert_eq!(response.response.keypairs[1].private_key, "test_private_key_2");
+}

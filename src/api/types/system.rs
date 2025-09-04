@@ -27,6 +27,11 @@ pub struct GetNodesMetricsResponseDto {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GenerateX25519ResponseDto {
+    pub response: GenerateX25519Data,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct SystemStatsData {
     pub cpu: CpuStats,
@@ -154,4 +159,16 @@ pub struct OutboundStat {
     pub tag: String,
     pub upload: String,
     pub download: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GenerateX25519Data {
+    pub keypairs: Vec<X25519Keypair>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct X25519Keypair {
+    pub public_key: String,
+    pub private_key: String,
 }
