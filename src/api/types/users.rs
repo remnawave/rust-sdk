@@ -332,6 +332,8 @@ pub struct BulkAllUpdateUsersRequestDto {
     pub email: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tag: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub hwid_device_limit: Option<i32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -375,6 +377,8 @@ pub struct BulkUpdateFields {
     pub email: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tag: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub hwid_device_limit: Option<i32>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
