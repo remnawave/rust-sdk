@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
+## [2.1.11] - 2025-09-10
+
+Compatibility:
+- Contract/SDK 2.1.11 targets Remnawave API v2111
+
+### Changed
+- Updated API compatibility from v2.1.8 to v2.1.11
+- OpenAPI specification updated from 3.0.0 to 3.1.1
+- Schema format changes for nullable types (internal - no changes for sdk)
+
 ## [2.1.8] - 2025-09-04
 
 Compatibility:

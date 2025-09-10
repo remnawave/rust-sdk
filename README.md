@@ -24,7 +24,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-remnawave = "2.1.5" # { version = "2.1.5", features = ["native-tls"] }
+remnawave = "2.1.11" # { version = "2.1.11", features = ["native-tls"] }
 tokio = { version = "1.0", features = ["full"] }
 ```
 
@@ -297,7 +297,8 @@ Check out the `tests/` directory for comprehensive examples:
 
 | SDK Version   | Remnawave Panel Version |
 |---------------|-------------------------|
-| 2.1.5         | >=2.1.4                 |
+| 2.1.11        | >=2.1.8                 |
+| 2.1.8         | >=2.1.4                 |
 | Not supported | >=2.1.0,<2.1.4          |
 | 2.0.0         | >=2.0.0,<2.1.0          |
 | Not supported | <2.0.0                  |
