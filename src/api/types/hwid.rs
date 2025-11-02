@@ -70,3 +70,67 @@ pub struct GetUserHwidDevicesData {
 pub struct GetUserHwidDevicesResponseDto {
     pub response: GetUserHwidDevicesData,
 }
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GetAllHwidDevicesResponseDto {
+    pub response: GetAllHwidDevicesData,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct GetAllHwidDevicesData {
+    pub total: usize,
+    pub devices: Vec<HwidDeviceDto>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct DeleteAllUserHwidDevicesRequestDto {
+    pub user_uuid: Uuid,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct DeleteAllUserHwidDevicesResponseDto {
+    pub response: DeleteAllUserHwidDevicesData,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct DeleteAllUserHwidDevicesData {
+    pub total: usize,
+    pub devices: Vec<HwidDeviceDto>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct GetHwidDevicesStatsResponseDto {
+    pub response: HwidDevicesStats,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct HwidDevicesStats {
+    pub by_platform: Vec<HwidDevicesPlatformStat>,
+    pub by_app: Vec<HwidDevicesAppStat>,
+    pub stats: HwidDevicesStatsSummary,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct HwidDevicesPlatformStat {
+    pub platform: String,
+    pub count: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct HwidDevicesAppStat {
+    pub app: String,
+    pub count: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
+pub struct HwidDevicesStatsSummary {
+    pub total_unique_devices: usize,
+    pub total_hwid_devices: usize,
+    pub average_hwid_devices_per_user: f64,
+}

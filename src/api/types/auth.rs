@@ -37,8 +37,48 @@ pub struct RegisterResponseDto {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
-pub struct TgAuth {
-    pub bot_id: i64,
+pub struct GetStatusResponseData {
+    pub is_login_allowed: bool,
+    pub is_register_allowed: bool,
+    pub authentication: Option<AuthenticationStatus>,
+    pub branding: BrandingSettings,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub tg_auth: Option<TgAuthStatus>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub oauth2: Option<OAuth2Providers>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct GetStatusResponseDto {
+    pub response: GetStatusResponseData,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct AuthenticationStatus {
+    pub passkey: PasskeyAuthStatus,
+    pub tg_auth: TgAuthStatus,
+    pub oauth2: OAuth2Providers,
+    pub password: PasswordAuthStatus,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct PasskeyAuthStatus {
+    pub enabled: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct TgAuthStatus {
+    pub enabled: bool,
+    pub bot_id: Option<i64>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct PasswordAuthStatus {
+    pub enabled: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -48,16 +88,9 @@ pub struct OAuth2Providers {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
-pub struct GetStatusResponseData {
-    pub is_login_allowed: bool,
-    pub is_register_allowed: bool,
-    pub tg_auth: Option<TgAuth>,
-    pub oauth2: OAuth2Providers,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct GetStatusResponseDto {
-    pub response: GetStatusResponseData,
+pub struct BrandingSettings {
+    pub title: Option<String>,
+    pub logo_url: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -67,7 +100,6 @@ pub struct TelegramCallbackRequestDto {
     pub last_name: Option<String>,
     pub username: Option<String>,
     pub photo_url: Option<String>,
-    pub auth_date: usize,
     pub hash: String,
 }
 
@@ -83,7 +115,7 @@ pub struct TelegramCallbackResponseDto {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum OAuth2Provider {
     Github,
     Pocketid,
@@ -98,7 +130,7 @@ pub struct OAuth2AuthorizeRequestDto {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct OAuth2AuthorizeResponseData {
-    pub authorization_url: Option<String>,
+    pub authorization_url: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -122,6 +154,27 @@ pub struct OAuth2CallbackResponseData {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct OAuth2CallbackResponseDto {
     pub response: OAuth2CallbackResponseData,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct GetPasskeyAuthenticationOptionsResponseDto {
+    pub response: serde_json::Value,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct VerifyPasskeyAuthenticationRequestDto {
+    pub response: serde_json::Value,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct VerifyPasskeyAuthenticationResponseData {
+    pub access_token: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct VerifyPasskeyAuthenticationResponseDto {
+    pub response: VerifyPasskeyAuthenticationResponseData,
 }
 
 mod password_validation {

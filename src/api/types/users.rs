@@ -14,6 +14,7 @@ pub struct InternalSquad {
 pub struct LastConnectedNode {
     pub connected_at: DateTime<Utc>,
     pub node_name: String,
+    pub country_code: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -64,17 +65,21 @@ pub struct CreateUserRequestDto {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub last_traffic_reset_at: Option<DateTime<Utc>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
+    pub description: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub tag: Option<String>,
+    pub tag: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub telegram_id: Option<i64>,
+    pub telegram_id: Option<Option<i64>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub email: Option<String>,
+    pub email: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub hwid_device_limit: Option<usize>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub active_internal_squads: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub uuid: Option<Uuid>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub external_squad_uuid: Option<Option<Uuid>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -85,26 +90,32 @@ pub struct CreateUserResponseDto {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct UpdateUserRequestDto {
-    pub uuid: Uuid,
-    #[serde(default)]
-    pub status: UserStatus,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub username: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub uuid: Option<Uuid>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub status: Option<UserStatus>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub traffic_limit_bytes: Option<usize>,
-    #[serde(default)]
-    pub traffic_limit_strategy: TrafficLimitStrategy,
-    pub expire_at: DateTime<Utc>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
+    pub traffic_limit_strategy: Option<TrafficLimitStrategy>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub tag: Option<String>,
+    pub expire_at: Option<DateTime<Utc>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub telegram_id: Option<i64>,
+    pub description: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub email: Option<String>,
+    pub tag: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub hwid_device_limit: Option<usize>,
+    pub telegram_id: Option<Option<i64>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub email: Option<Option<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub hwid_device_limit: Option<Option<usize>>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub active_internal_squads: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub external_squad_uuid: Option<Option<Uuid>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -144,6 +155,7 @@ pub struct UserData {
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
     pub active_internal_squads: Vec<InternalSquad>,
+    pub external_squad_uuid: Option<Uuid>,
     pub subscription_url: String,
     pub last_connected_node: Option<LastConnectedNode>,
     pub happ: Happ,
@@ -191,6 +203,28 @@ pub struct GetUserAccessibleNodesResponseDto {
 pub struct GetUserAccessibleNodesResponse {
     pub user_uuid: Uuid,
     pub active_nodes: Vec<ActiveNode>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GetUserSubscriptionRequestHistoryResponseDto {
+    pub response: UserSubscriptionRequestHistoryData,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct UserSubscriptionRequestHistoryData {
+    pub total: usize,
+    pub records: Vec<UserSubscriptionRequestRecord>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct UserSubscriptionRequestRecord {
+    pub id: i64,
+    pub user_uuid: Uuid,
+    pub request_at: DateTime<Utc>,
+    pub request_ip: Option<String>,
+    pub user_agent: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -325,15 +359,17 @@ pub struct BulkAllUpdateUsersRequestDto {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub expire_at: Option<DateTime<Utc>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
+    pub description: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub telegram_id: Option<i64>,
+    pub telegram_id: Option<Option<i64>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub email: Option<String>,
+    pub email: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub tag: Option<String>,
+    pub tag: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub hwid_device_limit: Option<i32>,
+    pub hwid_device_limit: Option<Option<i32>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub external_squad_uuid: Option<Option<Uuid>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -370,15 +406,17 @@ pub struct BulkUpdateFields {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub expire_at: Option<DateTime<Utc>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub description: Option<String>,
+    pub description: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub telegram_id: Option<i64>,
+    pub telegram_id: Option<Option<i64>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub email: Option<String>,
+    pub email: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub tag: Option<String>,
+    pub tag: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub hwid_device_limit: Option<i32>,
+    pub hwid_device_limit: Option<Option<i32>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub external_squad_uuid: Option<Option<Uuid>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -392,6 +430,7 @@ pub struct UsageData {
     pub user_uuid: Uuid,
     pub node_uuid: Uuid,
     pub node_name: String,
+    pub country_code: String,
     pub total: usize,
     pub date: String,
 }

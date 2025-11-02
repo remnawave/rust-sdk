@@ -41,6 +41,11 @@ pub struct GetConfigProfileByUuidResponseDto {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GetComputedConfigProfileByUuidResponseDto {
+    pub response: ConfigProfile,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct DeleteConfigProfileResponseDto {
     pub response: DeleteConfigProfileResponseData,
 }

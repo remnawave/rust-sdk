@@ -2,10 +2,7 @@
 
 ![Crates.io Version](https://img.shields.io/crates/v/remnawave) ![GitHub Tag](https://img.shields.io/github/v/tag/remnawave/rust-sdk) ![GitHub Repo stars](https://img.shields.io/github/stars/remnawave/rust-sdk)
 
-![Build Status](https://img.shields.io/github/actions/workflow/status/remnawave/rust-sdk/.github/workflows/publish.yml) ![Crates.io Last Update](https://img.shields.io/crates/last-update/remnawave)
-![Downloads](https://img.shields.io/crates/d/remnawave) ![License](https://img.shields.io/crates/l/remnawave)
-
-![Known Vulnerabilities](https://snyk.io/test/github/remnawave/rust-sdk/badge.svg) ![Coverage Status](https://img.shields.io/codecov/c/github/remnawave/rust-sdk)
+![Build Status](https://img.shields.io/github/actions/workflow/status/remnawave/rust-sdk/.github/workflows/publish.yml) ![Downloads](https://img.shields.io/crates/d/remnawave) ![License](https://img.shields.io/crates/l/remnawave)
 
 A ~~🚀 blazingly fast~~ high-performance Rust SDK for interacting with the **[Remnawave API](https://remna.st)**. This library provides a type-safe, async interface for managing and monitoring your Remnawave server, including user management, subscription handling, node monitoring, and comprehensive statistics.
 
@@ -24,14 +21,14 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-remnawave = "2.1.11" # { version = "2.1.11", features = ["native-tls"] }
+remnawave = "2.2.4" # or { version = "2.2.4", features = ["native-tls"] }
 tokio = { version = "1.0", features = ["full"] }
 ```
 
 Or install via cargo:
 
 ```bash
-cargo add remnawave
+cargo add remnawave@2.2.4
 cargo add tokio --features full
 ```
 
@@ -50,12 +47,12 @@ async fn main() -> Result<()> {
     )?;
 
     // Get all users
-    let users_response = client.users.get_all_users(Some(10), Some(0)).await?;
-    println!("Total users: {}", users_response.total);
+    let users = client.users.get_all(Some(10), Some(0)).await?;
+    println!("Users returned: {}", users.response.users.len());
 
     // Get system statistics
     let stats = client.system.get_stats().await?;
-    println!("System stats: {:?}", stats);
+    println!("System stats: {:?}", stats.response);
 
     Ok(())
 }
@@ -161,9 +158,11 @@ Main client struct for interacting with the Remnawave API.
 
 ```rust
 impl RemnawaveApiClient {
-    pub fn new(base_url: String, token: Option<String>) -> Result<Self>
-    pub fn set_token(&mut self, token: Option<String>)
-    pub fn base_url(&self) -> &str
+    pub fn new(base_url: String, token: Option<String>) -> anyhow::Result<Self>;
+    pub fn with_caddy_token(base_url: String, token: Option<String>, caddy_token: Option<String>) -> anyhow::Result<Self>;
+    pub fn set_token(&mut self, token: Option<String>);
+    pub fn set_caddy_token(&mut self, token: Option<String>);
+    pub fn base_url(&self) -> &str;
 }
 ```
 
@@ -217,26 +216,44 @@ client.users.bulk_reset_user_traffic(reset_request).await?;
 ### Usage Statistics
 
 ```rust
-// Get node usage by date range
-let usage = client.nodes_usage.get_nodes_usage_by_range(
-    start_date,
-    end_date,
-    Some(node_uuid)
-).await?;
+use chrono::{Utc, Duration, SecondsFormat};
 
-// Get user usage by range
-let user_usage = client.nodes_usage.get_user_usage_by_range(
-    user_uuid,
-    start_date,
-    end_date
-).await?;
+// Required: RFC3339 DateTime strings (seconds precision, Z suffix)
+let end = Utc::now().to_rfc3339_opts(SecondsFormat::Secs, true);
+let start = (Utc::now() - Duration::hours(1)).to_rfc3339_opts(SecondsFormat::Secs, true);
 
-// Get node user usage
-let node_user_usage = client.nodes_usage.get_node_user_usage_by_range(
-    node_uuid,
-    start_date,
-    end_date
-).await?;
+// Nodes usage by range
+let usage = client
+    .nodes_usage
+    .get_usage_by_range(Some(start.clone()), Some(end.clone()))
+    .await?;
+
+// Node user usage by range
+let node_user_usage = client
+    .nodes_usage
+    .get_user_usage(node_uuid.to_string(), Some(start.clone()), Some(end.clone()))
+    .await?;
+
+// User usage by range
+let user_usage = client
+    .users
+    .get_usage_by_range(user_uuid, Some(start.clone()), Some(end.clone()))
+    .await?;
+```
+
+### Subscription links (raw text)
+
+Some subscription endpoints return plaintext (not JSON). The SDK exposes these as `String`:
+
+```rust
+use remnawave::types::SubscriptionClientType;
+
+let short_uuid = "abc123".to_string();
+let all_clients_text = client.subscriptions.get(short_uuid.clone()).await?; // String
+let clash_text = client
+    .subscriptions
+    .get_by_client_type(short_uuid.clone(), SubscriptionClientType::Clash)
+    .await?; // String
 ```
 
 ## Error Handling
@@ -285,23 +302,6 @@ client.set_token(Some("new-token".to_string()));
 // Update Caddy token later
 client.set_caddy_token(Some("new-caddy-api-key".to_string()));
 ```
-
-## Examples
-
-Check out the `tests/` directory for comprehensive examples:
-
-- `integration_tests.rs` - Real API integration examples
-- `unit_tests.rs` - Unit test examples and mocking
-
-## Compatible Versions
-
-| SDK Version   | Remnawave Panel Version |
-|---------------|-------------------------|
-| 2.1.11        | >=2.1.8                 |
-| 2.1.8         | >=2.1.4                 |
-| Not supported | >=2.1.0,<2.1.4          |
-| 2.0.0         | >=2.0.0,<2.1.0          |
-| Not supported | <2.0.0                  |
 
 # Contributors
 

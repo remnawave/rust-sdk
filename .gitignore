@@ -1,5 +1,6 @@
 Cargo.lock
 /target
 /versions
+/tests
 .vscode
 .idea

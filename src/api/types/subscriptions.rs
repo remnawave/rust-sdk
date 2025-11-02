@@ -27,16 +27,14 @@ impl fmt::Display for SubscriptionClientType {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "UPPERCASE")]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum SubscriptionTemplateType {
-    Stash,
-    SingBox,
-    #[serde(rename = "SINGBOX_LEGACY")]
-    SingBoxLegacy,
-    Mihomo,
-    #[serde(rename = "XRAY_JSON")]
     XrayJson,
+    XrayBase64,
+    Mihomo,
+    Stash,
     Clash,
+    Singbox,
 }
 
 impl fmt::Display for SubscriptionTemplateType {
@@ -94,13 +92,19 @@ pub struct RawHost {
     pub x_http_extra_params: Option<HashMap<String, serde_json::Value>>,
     pub server_description: Option<String>,
     pub flow: Option<String>,
+    pub allow_insecure: Option<bool>,
+    pub shuffle_host: Option<bool>,
+    pub mihomo_x25519: Option<bool>,
+    #[serde(rename = "mldsa65Verify")]
+    pub mldsa_65_verify: Option<String>,
+    pub encryption: Option<String>,
     pub protocol_options: Option<ProtocolOptions>,
     #[serde(rename = "muxParams")]
     pub mux_params: Option<serde_json::Value>,
     #[serde(rename = "sockoptParams")]
     pub sockopt_params: Option<serde_json::Value>,
     #[serde(rename = "dbData")]
-    pub db_data: Option<serde_json::Value>,
+    pub db_data: Option<RawHostDbData>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -133,6 +137,22 @@ pub struct HostPasswords {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
+pub struct RawHostDbData {
+    pub raw_inbound: serde_json::Value,
+    pub inbound_tag: String,
+    pub uuid: Uuid,
+    pub config_profile_uuid: Option<Uuid>,
+    pub config_profile_inbound_uuid: Option<Uuid>,
+    pub is_disabled: bool,
+    pub view_position: i32,
+    pub remark: String,
+    pub is_hidden: bool,
+    pub tag: Option<String>,
+    pub vless_route_id: Option<i32>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
 pub struct RawSubscriptionUser {
     pub uuid: Uuid,
     pub short_uuid: String,
@@ -140,7 +160,7 @@ pub struct RawSubscriptionUser {
     pub status: UserStatus,
     pub used_traffic_bytes: u64,
     pub lifetime_used_traffic_bytes: u64,
-    pub traffic_limit_bytes: i32,
+    pub traffic_limit_bytes: i64,
     pub traffic_limit_strategy: TrafficLimitStrategy,
     pub sub_last_user_agent: Option<String>,
     pub sub_last_opened_at: Option<DateTime<Utc>>,
@@ -161,6 +181,7 @@ pub struct RawSubscriptionUser {
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
     pub active_internal_squads: Vec<InternalSquad>,
+    pub external_squad_uuid: Option<Uuid>,
     pub subscription_url: String,
     pub last_connected_node: Option<LastConnectedNode>,
     pub happ: HappConfig,
@@ -290,29 +311,147 @@ pub struct UsernameSubscriptionResponse {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct GetTemplateResponseDto {
-    pub response: TemplateResponse,
+pub struct GetTemplatesResponseDto {
+    pub response: TemplatesListResponse,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct UpdateTemplateRequestDto {
-    pub template_type: SubscriptionTemplateType,
-    pub template: String,
+pub struct TemplatesListResponse {
+    pub total: usize,
+    pub templates: Vec<TemplateSummary>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
-pub struct TemplateResponse {
+pub struct TemplateSummary {
     pub uuid: Uuid,
+    pub name: String,
     pub template_type: SubscriptionTemplateType,
     pub template_json: Option<serde_json::Value>,
     pub encoded_template_yaml: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct GetTemplateResponseDto {
+    pub response: TemplateSummary,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct UpdateTemplateRequestDto {
+    pub uuid: Uuid,
+    pub name: String,
+    pub template_json: Option<serde_json::Value>,
+    pub encoded_template_yaml: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct UpdateTemplateResponseDto {
-    pub response: TemplateResponse,
+    pub response: TemplateSummary,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct DeleteSubscriptionTemplateResponse {
+    pub is_deleted: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct DeleteSubscriptionTemplateResponseDto {
+    pub response: DeleteSubscriptionTemplateResponse,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct CreateSubscriptionTemplateRequestDto {
+    pub name: String,
+    pub template_type: SubscriptionTemplateType,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct CreateSubscriptionTemplateResponseDto {
+    pub response: TemplateSummary,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct SubscriptionResponseRuleHeaderModification {
+    pub key: String,
+    pub value: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum SubscriptionResponseRuleConditionOperator {
+    Equals,
+    NotEquals,
+    Contains,
+    NotContains,
+    StartsWith,
+    NotStartsWith,
+    EndsWith,
+    NotEndsWith,
+    Regex,
+    NotRegex,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct SubscriptionResponseRuleCondition {
+    pub header_name: String,
+    pub operator: SubscriptionResponseRuleConditionOperator,
+    pub value: String,
+    pub case_sensitive: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum SubscriptionResponseRuleOperator {
+    And,
+    Or,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+pub enum SubscriptionResponseRuleType {
+    XrayJson,
+    XrayBase64,
+    Mihomo,
+    Stash,
+    Clash,
+    Singbox,
+    Browser,
+    Block,
+    StatusCode404,
+    StatusCode451,
+    SocketDrop,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct SubscriptionResponseRuleModifications {
+    pub headers: Option<Vec<SubscriptionResponseRuleHeaderModification>>,
+    pub subscription_template: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct SubscriptionResponseRule {
+    pub name: String,
+    pub description: Option<String>,
+    pub enabled: bool,
+    pub operator: SubscriptionResponseRuleOperator,
+    pub conditions: Vec<SubscriptionResponseRuleCondition>,
+    pub response_type: SubscriptionResponseRuleType,
+    pub response_modifications: Option<SubscriptionResponseRuleModifications>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct SubscriptionResponseRulesConfig {
+    pub version: String,
+    pub rules: Vec<SubscriptionResponseRule>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -331,13 +470,16 @@ pub struct UpdateSubscriptionSettingsRequestDto {
     pub serve_json_at_base_subscription: bool,
     pub add_username_to_base_subscription: bool,
     pub is_show_custom_remarks: bool,
-    pub happ_announce: Option<String>,
-    pub happ_routing: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub happ_announce: Option<Option<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub happ_routing: Option<Option<String>>,
     pub expired_users_remarks: Vec<String>,
     pub limited_users_remarks: Vec<String>,
     pub disabled_users_remarks: Vec<String>,
     pub custom_response_headers: Option<std::collections::HashMap<String, String>>,
     pub randomize_hosts: bool,
+    pub response_rules: Option<SubscriptionResponseRulesConfig>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -363,6 +505,7 @@ pub struct SubscriptionSettings {
     pub disabled_users_remarks: Vec<String>,
     pub custom_response_headers: Option<std::collections::HashMap<String, String>>,
     pub randomize_hosts: bool,
+    pub response_rules: Option<SubscriptionResponseRulesConfig>,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
 }

@@ -4,40 +4,80 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and this project adheres to Semantic Versioning.
 
-## [2.1.11] - 2025-09-10
+## [2.2.4] - 2025-11-02
 
 Compatibility:
-- Contract/SDK 2.1.11 targets Remnawave API v2111
-
-### Changed
-- Updated API compatibility from v2.1.8 to v2.1.11
-- OpenAPI specification updated from 3.0.0 to 3.1.1
-- Schema format changes for nullable types (internal - no changes for sdk)
-
-## [2.1.8] - 2025-09-04
-
-Compatibility:
-- Contract/SDK 2.1.8 targets Remnawave API v218
+- Contract/SDK 2.2.4 targets Remnawave API v2.2.4
 
 ### Added
-- system/controllers: Implement new X25519 keypair generation endpoint:
-  - GET `/api/system/tools/x25519/generate`
-- system/types: Introduced X25519 keypair generation types:
-  - `GenerateX25519ResponseDto`
-  - `GenerateX25519Data`
-  - `X25519Keypair`
-- subscriptions/types: New comprehensive raw subscription data types:
-  - `RawSubscriptionUser` - Full user details with all fields
-  - `ConvertedUserInfo` - Backward-compatible display values
-- users/types: Added HWID device limit support:
-  - `hwid_device_limit: Option<i32>` field in `BulkUpdateFields`
-  - `hwid_device_limit: Option<i32>` field in `BulkAllUpdateUsersRequestDto`
+- New controllers and endpoints:
+  - External Squads: CRUD and bulk operations
+    - GET `/api/external-squads`
+    - GET `/api/external-squads/{uuid}`
+    - POST `/api/external-squads`
+    - PATCH `/api/external-squads`
+    - DELETE `/api/external-squads/{uuid}`
+    - POST `/api/external-squads/{uuid}/bulk-actions/add-users`
+    - DELETE `/api/external-squads/{uuid}/bulk-actions/remove-users`
+  - Passkeys: registration/authn flow and management
+    - GET `/api/passkeys/registration/options`
+    - POST `/api/passkeys/registration/verify`
+    - GET `/api/passkeys`
+    - DELETE `/api/passkeys`
+  - Remnawave Settings: read/update server-wide auth/branding settings
+    - GET `/api/remnawave-settings`
+    - PATCH `/api/remnawave-settings`
+  - Snippets: simple JSON snippets CRUD
+    - GET `/api/snippets`
+    - POST `/api/snippets`
+    - PATCH `/api/snippets`
+    - DELETE `/api/snippets`
+  - Subscription Request History (global):
+    - GET `/api/subscription-request-history?size=&start=`
+    - GET `/api/subscription-request-history/stats`
+  - Users: subscription request history by user
+    - GET `/api/users/{uuid}/subscription-request-history`
+- System tools and testers:
+  - POST `/api/system/tools/happ/encrypt` — encrypt Happ crypto links
+  - POST `/api/system/testers/srr-matcher` — debug subscription response rules matcher
+- Subscriptions (plaintext responses):
+  - GET `/api/sub/{short}` returns plaintext subscription
+  - GET `/api/sub/{short}/{clientType}` returns plaintext subscription for a specific client
+  - GET `/api/sub/{short}/info` returns structured subscription info
+  - GET `/api/subscriptions/by-short-uuid/{short}/raw` returns rich raw subscription payload
+- Integration tests:
+  - Rewrote end-to-end integration test to exercise all GET endpoints with tolerant logging (401/403 do not fail the run); uses env-driven base URL and tokens.
+- Types for new features:
+  - `external_squads` DTOs for squads CRUD and bulk actions
+  - `passkeys` DTOs for registration/verification and listing
+  - `remnawave_settings` DTOs for auth providers and branding settings
+  - `snippets` DTOs for snippets CRUD
+  - `subscription_request_history` DTOs for records and stats
 
 ### Changed
-- subscriptions/controllers: Moved raw subscription endpoint for better organization:
-  - `/api/sub/{shortUuid}/raw` → `/api/subscriptions/by-short-uuid/{shortUuid}/raw`
-- subscriptions/types: Complete redesign of `GetRawSubscriptionByShortUuidResponseDto`:
-  - `RawSubscriptionResponse` now includes `user`, `converted_user_info`, `headers`, `raw_hosts`
-  - `HostPasswords` structure made required (no longer optional)
-  - Enhanced user information with full profile data, internal squads, and connection history
-- API organization: Clear separation between public and protected subscription endpoints
+- Authentication types:
+  - `GetStatusResponseData` restructured: adds `authentication`, `branding`; `tg_auth` and `oauth2` are optional; provider map for OAuth2.
+  - `OAuth2AuthorizeResponseData.authorization_url` is now required (`String`).
+- Billing types:
+  - `UpdateInfraBillingNodeRequestDto` now supports bulk via `uuids: Vec<Uuid>` (was a single `uuid`).
+  - Monetary fields use `f64` (`amount`, `total_amount`, `current_month_payments`, `total_spent`).
+- Users types:
+  - Broad nullable support: many string-like fields use `Option<Option<T>>` for “clear” semantics in create/update/bulk DTOs.
+  - Counters widened: several traffic byte counters now `i64`.
+- Subscriptions:
+  - Plaintext subscription endpoints now return `String`; SDK routes use a text-response handler.
+  - Added `/api/sub/{short}/info` and `/api/subscriptions/by-short-uuid/{short}/raw` responses.
+- Nodes/Usage and Users/Usage:
+  - Range endpoints accept optional `start`/`end` query parameters as RFC3339 DateTime strings (seconds precision, Z).
+- System types:
+  - `SystemStatsData.uptime` and `timestamp` changed to `f64`.
+  - `MemoryStats` values changed to `f64`.
+- Config Profiles:
+  - Fixed inbounds path to `/api/config-profiles/{uuid}/inbounds`.
+- Macros/Controllers:
+  - Controller macro gained `handle_text_response` to support plaintext endpoints.
+  - Deprecated several old method aliases to standardize naming (e.g., `get_*` vs older variants).
+
+### Breaking Changes
+- billing: `UpdateInfraBillingNodeRequestDto.uuid` renamed to `uuids` and type changed from `Uuid` to `Vec<Uuid>`.
+- Public DTOs adjusted for floats (`f64`) where server returns non-integer values; some derives dropped from `Eq` as a result.

@@ -13,6 +13,7 @@ api_delete!(NodesController, delete, "/api/nodes/{}", DeleteNodeResponseDto, uui
 api_post_with_path_no_body!(NodesController, enable, "/api/nodes/{}/actions/enable", EnableNodeResponseDto, uuid: Uuid);
 api_post_with_path_no_body!(NodesController, disable, "/api/nodes/{}/actions/disable", DisableNodeResponseDto, uuid: Uuid);
 api_post_with_path_no_body!(NodesController, restart, "/api/nodes/{}/actions/restart", RestartNodeResponseDto, uuid: Uuid);
+api_post_with_path_no_body!(NodesController, reset_traffic, "/api/nodes/{}/actions/reset-traffic", ResetNodeTrafficResponseDto, uuid: Uuid);
 api_post!(NodesController, restart_all, "/api/nodes/actions/restart-all", RestartAllNodesRequestBodyDto, RestartAllNodesResponseDto);
 api_post!(NodesController, reorder, "/api/nodes/actions/reorder", ReorderNodeRequestDto, ReorderNodeResponseDto);
 
@@ -24,6 +25,7 @@ api_delete!(NodesController, delete_node, "/api/nodes/{}", DeleteNodeResponseDto
 api_post_with_path_no_body!(NodesController, enable_node, "/api/nodes/{}/actions/enable", EnableNodeResponseDto, deprecate: "Use enable", uuid: Uuid);
 api_post_with_path_no_body!(NodesController, disable_node, "/api/nodes/{}/actions/disable", DisableNodeResponseDto, deprecate: "Use disable", uuid: Uuid);
 api_post_with_path_no_body!(NodesController, restart_node, "/api/nodes/{}/actions/restart", RestartNodeResponseDto, deprecate: "Use restart", uuid: Uuid);
+api_post_with_path_no_body!(NodesController, reset_node_traffic, "/api/nodes/{}/actions/reset-traffic", ResetNodeTrafficResponseDto, deprecate: "Use reset_traffic", uuid: Uuid);
 api_post!(NodesController, restart_all_nodes, "/api/nodes/actions/restart-all", RestartAllNodesRequestBodyDto, RestartAllNodesResponseDto, deprecate: "Use restart_all");
 api_post!(NodesController, reorder_nodes, "/api/nodes/actions/reorder", ReorderNodeRequestDto, ReorderNodeResponseDto, deprecate: "Use reorder");
 

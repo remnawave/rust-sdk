@@ -16,7 +16,7 @@ pub struct CreateNodeRequestDto {
     pub country_code: String,
     pub consumption_multiplier: f32,
     pub config_profile: ConfigProfileRequest,
-    pub provider_uuid: Option<Uuid>,
+    pub provider_uuid: Option<Option<Uuid>>,
 }
 
 fn default_country_code() -> String {
@@ -37,7 +37,7 @@ pub struct UpdateNodeRequestDto {
     pub country_code: Option<String>,
     pub consumption_multiplier: Option<f32>,
     pub config_profile: Option<ConfigProfileRequest>,
-    pub provider_uuid: Option<Uuid>,
+    pub provider_uuid: Option<Option<Uuid>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -89,6 +89,11 @@ pub struct DisableNodeResponseDto {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct RestartNodeResponseDto {
     pub response: RestartNodeData,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct ResetNodeTrafficResponseDto {
+    pub response: ResetNodeTrafficData,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -193,6 +198,12 @@ pub struct DeleteNodeData {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RestartNodeData {
+    pub event_sent: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct ResetNodeTrafficData {
     pub event_sent: bool,
 }
 

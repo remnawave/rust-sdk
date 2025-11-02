@@ -8,8 +8,15 @@ api_get!(ConfigProfilesController, get_all, "/api/config-profiles", GetConfigPro
 api_post!(ConfigProfilesController, create, "/api/config-profiles", CreateConfigProfileRequestDto, CreateConfigProfileResponseDto);
 api_patch!(ConfigProfilesController, update, "/api/config-profiles", UpdateConfigProfileRequestDto, UpdateConfigProfileResponseDto);
 api_get!(ConfigProfilesController, get_all_inbounds, "/api/config-profiles/inbounds", GetAllInboundsResponseDto);
-api_get_with_path!(ConfigProfilesController, get_inbounds_by_profile_uuid, "/api/config-profiles/{}", GetInboundsByProfileUuidResponseDto, uuid: Uuid);
+api_get_with_path!(ConfigProfilesController, get_inbounds_by_profile_uuid, "/api/config-profiles/{}/inbounds", GetInboundsByProfileUuidResponseDto, uuid: Uuid);
 api_get_with_path!(ConfigProfilesController, get_by_uuid, "/api/config-profiles/{}", GetConfigProfileByUuidResponseDto, uuid: Uuid);
+api_get_with_path!(
+    ConfigProfilesController,
+    get_computed_config_by_uuid,
+    "/api/config-profiles/{}/computed-config",
+    GetComputedConfigProfileByUuidResponseDto,
+    uuid: Uuid
+);
 api_delete!(ConfigProfilesController, delete_by_uuid, "/api/config-profiles/{}", DeleteConfigProfileResponseDto, uuid: Uuid);
 
 api_get!(ConfigProfilesController, get_config_profiles, "/api/config-profiles", GetConfigProfilesResponseDto, deprecate: "Use get_all");

@@ -13,6 +13,7 @@ api_get_with_path!(UsersController, get_by_uuid, "/api/users/{}", GetUserByUuidR
 api_get!(UsersController, get_all_tags, "/api/users/tags", GetAllTagsResponseDto);
 
 api_get_with_path!(UsersController, get_accessible_nodes, "/api/users/{}/accessible-nodes", GetUserAccessibleNodesResponseDto, uuid: Uuid);
+api_get_with_path!(UsersController, get_subscription_request_history, "/api/users/{}/subscription-request-history", GetUserSubscriptionRequestHistoryResponseDto, uuid: Uuid);
 api_get_with_path!(UsersController, get_by_short_uuid, "/api/users/by-short-uuid/{}", GetUserByShortUuidResponseDto, short_uuid: String);
 api_get_with_path!(UsersController, get_by_username, "/api/users/by-username/{}", GetUserByUsernameResponseDto, username: String);
 api_get_with_path!(UsersController, get_by_telegram_id, "/api/users/by-telegram-id/{}", GetUserByTelegramIdResponseDto, telegram_id: String);
@@ -33,7 +34,14 @@ api_post!(UsersController, bulk_update_internal_squads, "/api/users/bulk/update-
 api_post!(UsersController, bulk_update_all, "/api/users/bulk/all/update", BulkAllUpdateUsersRequestDto, BulkAllUpdateUsersResponseDto);
 api_post_no_body!(UsersController, bulk_all_reset_traffic, "/api/users/bulk/all/reset-traffic", BulkAllResetTrafficUsersResponseDto);
 
-api_get_with_path!(UsersController, get_usage_by_range, "/api/users/stats/usage/{}/range", GetUserUsageByRangeResponseDto, uuid: Uuid);
+api_get_with_path_and_query!(
+	UsersController,
+	get_usage_by_range,
+	"/api/users/stats/usage/{}/range",
+	GetUserUsageByRangeResponseDto,
+	path_params: [uuid: Uuid],
+	query_params: [start: Option<String>, end: Option<String>]
+);
 
 api_post!(UsersController, create_user, "/api/users", CreateUserRequestDto, CreateUserResponseDto, deprecate: "Use create");
 api_patch!(UsersController, update_user, "/api/users", UpdateUserRequestDto, UpdateUserResponseDto, deprecate: "Use update");
@@ -42,6 +50,7 @@ api_delete!(UsersController, delete_user, "/api/users/{uuid}", DeleteUserRespons
 api_get_with_path!(UsersController, get_user_by_uuid, "/api/users/{}", GetUserByUuidResponseDto, deprecate: "Use get_by_uuid", uuid: Uuid);
 api_get!(UsersController, get_all_tags_deprecated, "/api/users/tags", GetAllTagsResponseDto, deprecate: "Use get_all_tags");
 api_get_with_path!(UsersController, get_user_accessible_nodes, "/api/users/{}/accessible-nodes", GetUserAccessibleNodesResponseDto, deprecate: "Use get_accessible_nodes", uuid: Uuid);
+api_get_with_path!(UsersController, get_user_subscription_request_history, "/api/users/{}/subscription-request-history", GetUserSubscriptionRequestHistoryResponseDto, deprecate: "Use get_subscription_request_history", uuid: Uuid);
 api_get_with_path!(UsersController, get_user_by_short_uuid, "/api/users/by-short-uuid/{}", GetUserByShortUuidResponseDto, deprecate: "Use get_by_short_uuid", short_uuid: String);
 api_get_with_path!(UsersController, get_user_by_username, "/api/users/by-username/{}", GetUserByUsernameResponseDto, deprecate: "Use get_by_username", username: String);
 api_get_with_path!(UsersController, get_user_by_telegram_id, "/api/users/by-telegram-id/{}", GetUserByTelegramIdResponseDto, deprecate: "Use get_by_telegram_id", telegram_id: String);
@@ -59,4 +68,12 @@ api_post!(UsersController, bulk_update_users, "/api/users/bulk/update", BulkUpda
 api_post!(UsersController, bulk_update_users_internal_squads, "/api/users/bulk/update-squads", BulkUpdateUsersSquadsRequestDto, BulkUpdateUsersSquadsResponseDto, deprecate: "Use bulk_update_internal_squads");
 api_post!(UsersController, bulk_update_all_users, "/api/users/bulk/all/update", BulkAllUpdateUsersRequestDto, BulkAllUpdateUsersResponseDto, deprecate: "Use bulk_update_all");
 api_post_no_body!(UsersController, bulk_all_reset_user_traffic, "/api/users/bulk/all/reset-traffic", BulkAllResetTrafficUsersResponseDto, deprecate: "Use bulk_all_reset_traffic");
-api_get_with_path!(UsersController, get_user_usage_by_range, "/api/users/stats/usage/{}/range", GetUserUsageByRangeResponseDto, deprecate: "Use get_usage_by_range", uuid: Uuid);
+api_get_with_path_and_query!(
+	UsersController,
+	get_user_usage_by_range,
+	"/api/users/stats/usage/{}/range",
+	GetUserUsageByRangeResponseDto,
+	deprecate: "Use get_usage_by_range",
+	path_params: [uuid: Uuid],
+	query_params: [start: Option<String>, end: Option<String>]
+);

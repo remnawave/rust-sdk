@@ -9,3 +9,5 @@ api_get!(SystemController, get_nodes_statistics, "/api/system/stats/nodes", GetN
 api_get!(SystemController, get_remnawave_health, "/api/system/health", GetRemnawaveHealthResponseDto);
 api_get!(SystemController, get_nodes_metrics, "/api/system/nodes/metrics", GetNodesMetricsResponseDto);
 api_get!(SystemController, get_x25519_keypairs, "/api/system/tools/x25519/generate", GenerateX25519ResponseDto);
+api_post!(SystemController, encrypt_happ_crypto_link, "/api/system/tools/happ/encrypt", EncryptHappCryptoLinkRequestDto, EncryptHappCryptoLinkResponseDto);
+api_post!(SystemController, debug_srr_matcher, "/api/system/testers/srr-matcher", DebugSrrMatcherRequestDto, DebugSrrMatcherResponseDto);

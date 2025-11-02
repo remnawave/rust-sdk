@@ -1,20 +1,34 @@
 use crate::api::controllers::macros::*;
 use crate::api::types::subscriptions::*;
+use uuid::Uuid;
 
 api_controller!(SubscriptionsController);
 
 api_get_with_path!(SubscriptionsController, get_info_by_short_uuid, "/api/sub/{}/info", GetSubscriptionInfoResponseDto, short_uuid: String);
 
-api_get_with_path!(SubscriptionsController, get, "/api/sub/{}", String, short_uuid: String);
-api_get_with_path!(SubscriptionsController, get_by_client_type, "/api/sub/{}/{}", String, short_uuid: String, client_type: SubscriptionClientType);
+impl SubscriptionsController {
+    #[doc = "GET /api/sub/{} - SubscriptionsController (raw text)"]
+    pub async fn get(&self, short_uuid: String) -> Result<String, crate::ApiError> {
+        let url = format!("{}/api/sub/{}", self.client.base_url(), short_uuid);
+        let response = api_request_common!(self, get, url.clone(), None::<()>)?;
+        self.handle_text_response(response, url).await
+    }
+
+    #[doc = "GET /api/sub/{}/{} - SubscriptionsController (raw text)"]
+    pub async fn get_by_client_type(&self, short_uuid: String, client_type: SubscriptionClientType) -> Result<String, crate::ApiError> {
+        let url = format!("{}/api/sub/{}/{}", self.client.base_url(), short_uuid, client_type);
+        let response = api_request_common!(self, get, url.clone(), None::<()>)?;
+        self.handle_text_response(response, url).await
+    }
+}
 
 impl SubscriptionsController {
     #[doc = "GET /api/sub/outline/{}/{}/{} - SubscriptionsController"]
     pub async fn get_with_type(&self, short_uuid: String, encoded_tag: String, subscription_type: Option<String>) -> Result<String, crate::ApiError> {
         let subscription_type = subscription_type.unwrap_or_else(|| "ss".to_string());
         let url = format!("{}/api/sub/outline/{}/{}/{}", self.client.base_url(), short_uuid, subscription_type, encoded_tag);
-        let response = api_request_common!(self, get, url, None::<()>)?;
-        self.handle_response(response, url).await
+        let response = api_request_common!(self, get, url.clone(), None::<()>)?;
+        self.handle_text_response(response, url).await
     }
 
     #[deprecated(note = "Use get_with_type")]
@@ -37,11 +51,17 @@ api_get_with_path!(SubscriptionsController, get_subscription_by_username, "/api/
 
 api_controller!(SubscriptionTemplateController);
 
-api_get_with_path!(SubscriptionTemplateController, get, "/api/subscription-templates/{}", GetTemplateResponseDto, template_type: SubscriptionTemplateType);
+api_get!(SubscriptionTemplateController, get_all, "/api/subscription-templates", GetTemplatesResponseDto);
+api_post!(SubscriptionTemplateController, create, "/api/subscription-templates", CreateSubscriptionTemplateRequestDto, CreateSubscriptionTemplateResponseDto);
+api_get_with_path!(SubscriptionTemplateController, get, "/api/subscription-templates/{}", GetTemplateResponseDto, uuid: Uuid);
 api_patch!(SubscriptionTemplateController, update, "/api/subscription-templates", UpdateTemplateRequestDto, UpdateTemplateResponseDto);
+api_delete!(SubscriptionTemplateController, delete, "/api/subscription-templates/{}", DeleteSubscriptionTemplateResponseDto, uuid: Uuid);
 
-api_get_with_path!(SubscriptionTemplateController, get_template, "/api/subscription-templates/{}", GetTemplateResponseDto, deprecate: "Use get", template_type: SubscriptionTemplateType);
+api_get!(SubscriptionTemplateController, get_templates, "/api/subscription-templates", GetTemplatesResponseDto, deprecate: "Use get_all");
+api_post!(SubscriptionTemplateController, create_template, "/api/subscription-templates", CreateSubscriptionTemplateRequestDto, CreateSubscriptionTemplateResponseDto, deprecate: "Use create");
+api_get_with_path!(SubscriptionTemplateController, get_template, "/api/subscription-templates/{}", GetTemplateResponseDto, deprecate: "Use get", uuid: Uuid);
 api_patch!(SubscriptionTemplateController, update_template, "/api/subscription-templates", UpdateTemplateRequestDto, UpdateTemplateResponseDto, deprecate: "Use update");
+api_delete!(SubscriptionTemplateController, delete_template, "/api/subscription-templates/{}", DeleteSubscriptionTemplateResponseDto, deprecate: "Use delete", uuid: Uuid);
 
 api_controller!(SubscriptionSettingsController);
 

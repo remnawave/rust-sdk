@@ -233,6 +233,27 @@ macro_rules! api_delete {
 }
 
 #[macro_export]
+macro_rules! api_delete_with_body {
+    (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty) => {
+        impl $controller {
+            $(#[$attr])*
+            #[doc = concat!("DELETE ", $path, " - ", stringify!($controller))]
+            pub async fn $method_name(&self, request: $request_type) -> Result<$response_type, $crate::ApiError> {
+                let url = format!("{}{}", self.client.base_url(), $path);
+                let response = api_request_common!(self, delete, url, Some(request))?;
+                self.handle_response(response, url).await
+            }
+        }
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, deprecate: $note:expr) => {
+        api_delete_with_body!(@impl [deprecated(note = $note)] $controller, $method_name, $path, $request_type, $response_type);
+    };
+    ($controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty) => {
+        api_delete_with_body!(@impl [] $controller, $method_name, $path, $request_type, $response_type);
+    };
+}
+
+#[macro_export]
 macro_rules! api_post_with_path {
     (@impl [$($attr:meta),*] $controller:ident, $method_name:ident, $path:expr, $request_type:ty, $response_type:ty, $($param:ident: $param_type:ty),*) => {
         impl $controller {
@@ -370,6 +391,51 @@ macro_rules! api_controller {
                         url,
                         request_body: None,
                         response_body,
+                        response_headers,
+                        timestamp,
+                        path,
+                        message,
+                        error_code,
+                        error,
+                    })
+                }
+            }
+
+            #[allow(dead_code)]
+            async fn handle_text_response(&self, response: reqwest::Response, url: String) -> Result<String, $crate::ApiError> {
+                let status = response.status();
+                let response_headers: std::collections::HashMap<String, String> =
+                    response
+                        .headers()
+                        .iter()
+                        .filter_map(|(name, value)| value.to_str().ok().map(|v| (name.to_string(), v.to_string())))
+                        .collect();
+
+                let body = response.text().await.unwrap_or_default();
+                if status.is_success() {
+                    Ok(body)
+                } else {
+                    // Try to parse error details from body
+                    let (timestamp, path, message, error_code, error) = if !body.is_empty() {
+                        if let Ok(json_value) = serde_json::from_str::<serde_json::Value>(&body) {
+                            let timestamp = json_value.get("timestamp").and_then(|v| v.as_str()).map(|s| s.to_string());
+                            let path = json_value.get("path").and_then(|v| v.as_str()).map(|s| s.to_string());
+                            let message = json_value.get("message").and_then(|v| v.as_str()).map(|s| s.to_string());
+                            let error_code = json_value.get("errorCode").and_then(|v| v.as_str()).map(|s| s.to_string());
+                            let error = json_value.get("error").and_then(|v| v.as_str()).map(|s| s.to_string());
+                            (timestamp, path, message, error_code, error)
+                        } else {
+                            (None, None, None, None, None)
+                        }
+                    } else {
+                        (None, None, None, None, None)
+                    };
+
+                    Err($crate::ApiError {
+                        status_code: status.as_u16(),
+                        url,
+                        request_body: None,
+                        response_body: body,
                         response_headers,
                         timestamp,
                         path,

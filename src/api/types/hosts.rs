@@ -120,7 +120,15 @@ pub struct HostDto {
     pub is_hidden: bool,
     #[serde(default)]
     pub override_sni_from_address: bool,
+    #[serde(default)]
+    pub allow_insecure: bool,
     pub vless_route_id: Option<i32>,
+    #[serde(default)]
+    pub shuffle_host: bool,
+    #[serde(default)]
+    pub mihomo_x25519: bool,
+    #[serde(default)]
+    pub nodes: Vec<Uuid>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -146,7 +154,15 @@ pub struct CreateHostRequestDto {
     pub is_hidden: bool,
     #[serde(default)]
     pub override_sni_from_address: bool,
+    #[serde(default)]
+    pub allow_insecure: bool,
     pub vless_route_id: Option<i32>,
+    #[serde(default)]
+    pub shuffle_host: bool,
+    #[serde(default)]
+    pub mihomo_x25519: bool,
+    #[serde(default)]
+    pub nodes: Vec<Uuid>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -171,7 +187,11 @@ pub struct UpdateHostRequestDto {
     pub tag: Option<String>,
     pub is_hidden: Option<bool>,
     pub override_sni_from_address: Option<bool>,
+    pub allow_insecure: Option<bool>,
     pub vless_route_id: Option<i32>,
+    pub shuffle_host: Option<bool>,
+    pub mihomo_x25519: Option<bool>,
+    pub nodes: Option<Vec<Uuid>>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

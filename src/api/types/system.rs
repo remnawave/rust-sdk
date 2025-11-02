@@ -1,7 +1,8 @@
+use crate::api::types::subscriptions::{SubscriptionResponseRule, SubscriptionResponseRuleType, SubscriptionResponseRulesConfig};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct GetStatsResponseDto {
     pub response: SystemStatsData,
 }
@@ -33,11 +34,28 @@ pub struct GenerateX25519ResponseDto {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
+pub struct EncryptHappCryptoLinkRequestDto {
+    pub link_to_encrypt: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct EncryptHappCryptoLinkResponseDto {
+    pub response: EncryptHappCryptoLinkResponse,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct EncryptHappCryptoLinkResponse {
+    pub encrypted_link: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase")]
 pub struct SystemStatsData {
     pub cpu: CpuStats,
     pub memory: MemoryStats,
-    pub uptime: usize,
-    pub timestamp: usize,
+    pub uptime: f64,
+    pub timestamp: f64,
     pub users: UsersStats,
     pub online_stats: OnlineStats,
     pub nodes: NodesStats,
@@ -50,13 +68,13 @@ pub struct CpuStats {
     pub physical_cores: usize,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct MemoryStats {
-    pub total: usize,
-    pub free: usize,
-    pub used: usize,
-    pub active: usize,
-    pub available: usize,
+    pub total: f64,
+    pub free: f64,
+    pub used: f64,
+    pub active: f64,
+    pub available: f64,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -164,6 +182,26 @@ pub struct OutboundStat {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct GenerateX25519Data {
     pub keypairs: Vec<X25519Keypair>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct DebugSrrMatcherRequestDto {
+    #[serde(rename = "responseRules")]
+    pub response_rules: SubscriptionResponseRulesConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct DebugSrrMatcherResponseDto {
+    pub response: DebugSrrMatcherResponse,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct DebugSrrMatcherResponse {
+    pub matched: bool,
+    pub response_type: SubscriptionResponseRuleType,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub matched_rule: Option<SubscriptionResponseRule>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]

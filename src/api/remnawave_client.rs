@@ -1,7 +1,7 @@
 use crate::api::{
-    ApiClient, ApiTokensController, AuthController, ConfigProfilesController, HostsController, HwidUserDevicesController, InfraBillingController, InternalSquadsController,
-    KeygenController, NodesController, NodesUsageController, SubscriptionSettingsController, SubscriptionTemplateController, SubscriptionsController, SystemController,
-    UsersController,
+    ApiClient, ApiTokensController, AuthController, ConfigProfilesController, ExternalSquadsController, HostsController, HwidUserDevicesController, InfraBillingController,
+    InternalSquadsController, KeygenController, NodesController, NodesUsageController, PasskeysController, RemnawaveSettingsController, SnippetsController,
+    SubscriptionRequestHistoryController, SubscriptionSettingsController, SubscriptionTemplateController, SubscriptionsController, SystemController, UsersController,
 };
 use anyhow::Result;
 use std::sync::Arc;
@@ -13,6 +13,11 @@ pub struct RemnawaveApiClient {
     pub subscriptions: SubscriptionsController,
     pub subscription_templates: SubscriptionTemplateController,
     pub subscription_settings: SubscriptionSettingsController,
+    pub subscription_request_history: SubscriptionRequestHistoryController,
+    pub external_squads: ExternalSquadsController,
+    pub passkeys: PasskeysController,
+    pub snippets: SnippetsController,
+    pub remnawave_settings: RemnawaveSettingsController,
     pub nodes: NodesController,
     pub nodes_usage: NodesUsageController,
     pub hosts: HostsController,
@@ -39,6 +44,11 @@ impl RemnawaveApiClient {
             subscriptions: SubscriptionsController::new(client.clone()),
             subscription_templates: SubscriptionTemplateController::new(client.clone()),
             subscription_settings: SubscriptionSettingsController::new(client.clone()),
+            subscription_request_history: SubscriptionRequestHistoryController::new(client.clone()),
+            external_squads: ExternalSquadsController::new(client.clone()),
+            passkeys: PasskeysController::new(client.clone()),
+            snippets: SnippetsController::new(client.clone()),
+            remnawave_settings: RemnawaveSettingsController::new(client.clone()),
             nodes: NodesController::new(client.clone()),
             nodes_usage: NodesUsageController::new(client.clone()),
             hosts: HostsController::new(client.clone()),
@@ -62,6 +72,11 @@ impl RemnawaveApiClient {
         self.subscriptions = SubscriptionsController::new(new_client.clone());
         self.subscription_templates = SubscriptionTemplateController::new(new_client.clone());
         self.subscription_settings = SubscriptionSettingsController::new(new_client.clone());
+        self.subscription_request_history = SubscriptionRequestHistoryController::new(new_client.clone());
+        self.external_squads = ExternalSquadsController::new(new_client.clone());
+        self.passkeys = PasskeysController::new(new_client.clone());
+        self.snippets = SnippetsController::new(new_client.clone());
+        self.remnawave_settings = RemnawaveSettingsController::new(new_client.clone());
         self.nodes = NodesController::new(new_client.clone());
         self.nodes_usage = NodesUsageController::new(new_client.clone());
         self.hosts = HostsController::new(new_client.clone());
@@ -83,6 +98,11 @@ impl RemnawaveApiClient {
         self.subscriptions = SubscriptionsController::new(new_client.clone());
         self.subscription_templates = SubscriptionTemplateController::new(new_client.clone());
         self.subscription_settings = SubscriptionSettingsController::new(new_client.clone());
+        self.subscription_request_history = SubscriptionRequestHistoryController::new(new_client.clone());
+        self.external_squads = ExternalSquadsController::new(new_client.clone());
+        self.passkeys = PasskeysController::new(new_client.clone());
+        self.snippets = SnippetsController::new(new_client.clone());
+        self.remnawave_settings = RemnawaveSettingsController::new(new_client.clone());
         self.nodes = NodesController::new(new_client.clone());
         self.nodes_usage = NodesUsageController::new(new_client.clone());
         self.hosts = HostsController::new(new_client.clone());

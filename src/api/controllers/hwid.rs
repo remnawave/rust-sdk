@@ -5,9 +5,19 @@ use crate::api::types::hwid::*;
 
 api_controller!(HwidUserDevicesController);
 
+api_get_with_query!(
+    HwidUserDevicesController,
+    get_all,
+    "/api/hwid/devices",
+    GetAllHwidDevicesResponseDto,
+    size: Option<usize>,
+    start: Option<usize>
+);
 api_post!(HwidUserDevicesController, create, "/api/hwid/devices", CreateUserHwidDeviceRequestDto, CreateUserHwidDeviceResponseDto);
 api_post!(HwidUserDevicesController, delete, "/api/hwid/devices/delete", DeleteUserHwidDeviceRequestDto, DeleteUserHwidDeviceResponseDto);
 api_get_with_path!(HwidUserDevicesController, get, "/api/hwid/devices/{}", GetUserHwidDevicesResponseDto, user_uuid: Uuid);
+api_post!(HwidUserDevicesController, delete_all, "/api/hwid/devices/delete-all", DeleteAllUserHwidDevicesRequestDto, DeleteAllUserHwidDevicesResponseDto);
+api_get!(HwidUserDevicesController, get_stats, "/api/hwid/devices/stats", GetHwidDevicesStatsResponseDto);
 
 api_post!(HwidUserDevicesController, create_user_hwid_device, "/api/hwid/devices", CreateUserHwidDeviceRequestDto, CreateUserHwidDeviceResponseDto, deprecate: "Use create");
 api_post!(HwidUserDevicesController, delete_user_hwid_device, "/api/hwid/devices/delete", DeleteUserHwidDeviceRequestDto, DeleteUserHwidDeviceResponseDto, deprecate: "Use delete");

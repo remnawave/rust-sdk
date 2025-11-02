@@ -13,7 +13,7 @@ pub struct GetInfraProvidersData {
     pub providers: Vec<InfraProviderDto>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct GetInfraProviderByUuidResponseDto {
     pub response: InfraProviderDto,
 }
@@ -39,7 +39,7 @@ pub struct CreateInfraProviderRequestDto {
     pub login_url: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CreateInfraProviderResponseDto {
     pub response: InfraProviderDto,
 }
@@ -51,17 +51,17 @@ pub struct UpdateInfraProviderRequestDto {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub favicon_link: Option<String>,
+    pub favicon_link: Option<Option<String>>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub login_url: Option<String>,
+    pub login_url: Option<Option<String>>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct UpdateInfraProviderResponseDto {
     pub response: InfraProviderDto,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct InfraProviderDto {
     pub uuid: Uuid,
@@ -74,10 +74,10 @@ pub struct InfraProviderDto {
     pub billing_nodes: Vec<BillingNodeSummary>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct BillingHistorySummary {
-    pub total_amount: usize,
+    pub total_amount: f64,
     pub total_bills: usize,
 }
 
@@ -89,41 +89,41 @@ pub struct BillingNodeSummary {
     pub country_code: String,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct CreateInfraBillingHistoryRecordRequestDto {
     pub provider_uuid: String,
-    pub amount: usize,
+    pub amount: f64,
     pub billed_at: DateTime<Utc>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct CreateInfraBillingHistoryRecordResponseDto {
     pub response: BillingHistoryResponseData,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct GetInfraBillingHistoryRecordsResponseDto {
     pub response: BillingHistoryResponseData,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct DeleteInfraBillingHistoryRecordByUuidResponseDto {
     pub response: BillingHistoryResponseData,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct BillingHistoryResponseData {
     pub records: Vec<BillingHistoryRecordDto>,
     pub total: usize,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct BillingHistoryRecordDto {
     pub uuid: Uuid,
     pub provider_uuid: String,
-    pub amount: usize,
+    pub amount: f64,
     pub billed_at: DateTime<Utc>,
     pub provider: BillingProviderInfo,
 }
@@ -158,7 +158,7 @@ pub struct CreateInfraBillingNodeResponseDto {
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct UpdateInfraBillingNodeRequestDto {
-    pub uuid: Uuid,
+    pub uuids: Vec<Uuid>,
     pub next_billing_at: DateTime<Utc>,
 }
 
@@ -224,6 +224,6 @@ pub struct AvailableBillingNodeDto {
 #[serde(rename_all = "camelCase")]
 pub struct BillingNodesStats {
     pub upcoming_nodes_count: usize,
-    pub current_month_payments: usize,
-    pub total_spent: usize,
+    pub current_month_payments: f64,
+    pub total_spent: f64,
 }
