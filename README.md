@@ -21,14 +21,14 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-remnawave = "2.2.4" # or { version = "2.2.4", features = ["native-tls"] }
+remnawave = "2.2.4-rev1" # or { version = "2.2.4-rev1", features = ["native-tls"] }
 tokio = { version = "1.0", features = ["full"] }
 ```
 
 Or install via cargo:
 
 ```bash
-cargo add remnawave@2.2.4
+cargo add remnawave@2.2.4-rev1
 cargo add tokio --features full
 ```
 
