@@ -405,11 +405,7 @@ macro_rules! api_controller {
             async fn handle_text_response(&self, response: reqwest::Response, url: String) -> Result<String, $crate::ApiError> {
                 let status = response.status();
                 let response_headers: std::collections::HashMap<String, String> =
-                    response
-                        .headers()
-                        .iter()
-                        .filter_map(|(name, value)| value.to_str().ok().map(|v| (name.to_string(), v.to_string())))
-                        .collect();
+                    response.headers().iter().filter_map(|(name, value)| value.to_str().ok().map(|v| (name.to_string(), v.to_string()))).collect();
 
                 let body = response.text().await.unwrap_or_default();
                 if status.is_success() {

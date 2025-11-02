@@ -35,12 +35,12 @@ api_post!(UsersController, bulk_update_all, "/api/users/bulk/all/update", BulkAl
 api_post_no_body!(UsersController, bulk_all_reset_traffic, "/api/users/bulk/all/reset-traffic", BulkAllResetTrafficUsersResponseDto);
 
 api_get_with_path_and_query!(
-	UsersController,
-	get_usage_by_range,
-	"/api/users/stats/usage/{}/range",
-	GetUserUsageByRangeResponseDto,
-	path_params: [uuid: Uuid],
-	query_params: [start: Option<String>, end: Option<String>]
+    UsersController,
+    get_usage_by_range,
+    "/api/users/stats/usage/{}/range",
+    GetUserUsageByRangeResponseDto,
+    path_params: [uuid: Uuid],
+    query_params: [start: Option<String>, end: Option<String>]
 );
 
 api_post!(UsersController, create_user, "/api/users", CreateUserRequestDto, CreateUserResponseDto, deprecate: "Use create");
@@ -69,11 +69,11 @@ api_post!(UsersController, bulk_update_users_internal_squads, "/api/users/bulk/u
 api_post!(UsersController, bulk_update_all_users, "/api/users/bulk/all/update", BulkAllUpdateUsersRequestDto, BulkAllUpdateUsersResponseDto, deprecate: "Use bulk_update_all");
 api_post_no_body!(UsersController, bulk_all_reset_user_traffic, "/api/users/bulk/all/reset-traffic", BulkAllResetTrafficUsersResponseDto, deprecate: "Use bulk_all_reset_traffic");
 api_get_with_path_and_query!(
-	UsersController,
-	get_user_usage_by_range,
-	"/api/users/stats/usage/{}/range",
-	GetUserUsageByRangeResponseDto,
-	deprecate: "Use get_usage_by_range",
-	path_params: [uuid: Uuid],
-	query_params: [start: Option<String>, end: Option<String>]
+    UsersController,
+    get_user_usage_by_range,
+    "/api/users/stats/usage/{}/range",
+    GetUserUsageByRangeResponseDto,
+    deprecate: "Use get_usage_by_range",
+    path_params: [uuid: Uuid],
+    query_params: [start: Option<String>, end: Option<String>]
 );
