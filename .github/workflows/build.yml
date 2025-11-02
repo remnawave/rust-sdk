@@ -13,8 +13,9 @@ jobs:
       matrix:
         toolchain:
           - nightly
-          - 1.82.0
+          - 1.83.0
           - 1.87.0
+          - 1.91.0
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository
     steps:
       - name: Checkout sources
@@ -49,18 +50,18 @@ jobs:
       - name: Run doc tests
         run: cargo test --verbose --doc
 
-      - name: Run clippy (on stable 1.87.0)
-        if: matrix.toolchain == '1.87.0'
+      - name: Run clippy (on stable 1.91.0)
+        if: matrix.toolchain == '1.91.0'
         run: cargo clippy --all-targets --all -- -D warnings
 
-      - name: Run cargo audit (on stable 1.87.0)
-        if: matrix.toolchain == '1.87.0'
+      - name: Run cargo audit (on stable 1.91.0)
+        if: matrix.toolchain == '1.91.0'
         run: |
           cargo install cargo-audit
           cargo audit
 
-      - name: Run cargo machete (on stable 1.87.0)
-        if: matrix.toolchain == '1.87.0'
+      - name: Run cargo machete (on stable 1.91.0)
+        if: matrix.toolchain == '1.91.0'
         run: |
           cargo install cargo-machete --version 0.8.0
           cargo machete
